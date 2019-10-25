@@ -16,6 +16,7 @@
     <Company>Spectre Systems AB</Company>
     <Copyright>Spectre Systems AB</Copyright>
     <Authors>Patrik Svensson</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <!-- Packages -->
