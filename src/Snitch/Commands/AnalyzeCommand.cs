@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using Snitch.Analysis;
+using Snitch.Analysis.Utilities;
 using Spectre.Cli;
 
 namespace Snitch.Commands
@@ -23,45 +24,9 @@ namespace Snitch.Commands
             public bool Strict { get; set; }
         }
 
-        public override ValidationResult Validate(CommandContext context, Settings settings)
-        {
-            if (!string.IsNullOrWhiteSpace(settings.ProjectPath))
-            {
-                settings.ProjectPath = Path.GetFullPath(settings.ProjectPath);
-                if (!File.Exists(settings.ProjectPath))
-                {
-                    return ValidationResult.Error("Project does not exist.");
-                }
-            }
-            else
-            {
-                var working = Environment.CurrentDirectory;
-                var projects = Directory.GetFiles(working, "*.csproj");
-                if (projects.Length == 0)
-                {
-                    return ValidationResult.Error("No project file found.");
-                }
-
-                if (projects.Length > 1)
-                {
-                    return ValidationResult.Error("More than one project file found.");
-                }
-
-                settings.ProjectPath = Path.GetFullPath(projects[0]);
-            }
-
-            return base.Validate(context, settings);
-        }
-
         public override int Execute(CommandContext context, Settings settings)
         {
-            // Header
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("Analysing project ");
-            Console.Write(Path.GetFileNameWithoutExtension(settings.ProjectPath));
-            Console.WriteLine("...");
-            Console.WriteLine();
-            Console.ResetColor();
+            settings.ProjectPath = PathUtility.GetProjectPath(settings.ProjectPath);
 
             // Analyze the project.
             var project = ProjectBuilder.Build(settings.ProjectPath, settings.TargetFramework);
@@ -70,15 +35,10 @@ namespace Snitch.Commands
             // Write the report.
             ProjectReporter.Write(result);
 
-            // Return success.
-            if (settings.Strict)
-            {
-                return result.NoPackagesToRemove ? 0 : -1;
-            }
-            else
-            {
-                return 0;
-            }
+            // Return exit code.
+            return settings.Strict
+                ? (result.NoPackagesToRemove ? 0 : -1)
+                : 0;
         }
     }
 }

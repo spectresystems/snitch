@@ -11,8 +11,15 @@ namespace Snitch.Analysis
     {
         public static Project Build(string path, string? tfm)
         {
+            Console.Write("Analysing project ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write(Path.GetFileNameWithoutExtension(path));
+            Console.ResetColor();
+            Console.WriteLine("...\n");
+
             var manager = new AnalyzerManager();
             var built = new Dictionary<string, Project>(StringComparer.OrdinalIgnoreCase);
+
             return Analyze(manager, path, tfm, built);
         }
 
@@ -63,7 +70,14 @@ namespace Snitch.Analysis
 
         private static AnalyzerResult Build(AnalyzerManager manager, Project project, string? tfm)
         {
-            Console.WriteLine("Building {0} ({1})...", Path.GetFileName(project.Path), tfm ?? "?");
+            Console.Write("Building ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write(project.Name);
+            Console.ResetColor();
+            Console.Write(" (");
+            Console.Write(tfm ?? "?");
+            Console.Write(")");
+            Console.WriteLine("...");
 
             var projectAnalyzer = manager.GetProject(project.Path);
             var results = (IEnumerable<AnalyzerResult>)projectAnalyzer.Build();

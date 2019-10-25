@@ -30,7 +30,7 @@ namespace Snitch.Analysis
                 foreach (var item in result.CanBeRemoved)
                 {
                     Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.Write("   {0} ", item.Package.Name);
+                    Console.Write("   {0}", item.Package.Name);
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     Console.WriteLine(" (ref by {0})", item.Original.Project.Name);
                     Console.ResetColor();

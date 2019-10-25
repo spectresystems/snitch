@@ -11,9 +11,9 @@ namespace Snitch
             var app = new CommandApp<AnalyzeCommand>();
             app.Configure(config =>
             {
-                config.ValidateExamples();
-
                 config.SetApplicationName("snitch");
+
+                config.ValidateExamples();
                 config.AddExample(new[] { "Project.csproj" });
                 config.AddExample(new[] { "Project.csproj", "--tfm", "net462" });
                 config.AddExample(new[] { "Project.csproj", "--tfm", "net462", "--strict" });
