@@ -13,8 +13,11 @@ namespace Snitch
             {
                 config.SetApplicationName("snitch");
 
+                config.UseStrictParsing();
                 config.ValidateExamples();
+
                 config.AddExample(new[] { "Project.csproj" });
+                config.AddExample(new[] { "Project.csproj", "-e", "Foo", "-e", "Bar" });
                 config.AddExample(new[] { "Project.csproj", "--tfm", "net462" });
                 config.AddExample(new[] { "Project.csproj", "--tfm", "net462", "--strict" });
             });

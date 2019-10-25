@@ -1,6 +1,4 @@
-using System;
 using System.ComponentModel;
-using System.IO;
 using Snitch.Analysis;
 using Snitch.Analysis.Utilities;
 using Spectre.Cli;
@@ -19,7 +17,11 @@ namespace Snitch.Commands
             [Description("The target framework moniker to analyze.")]
             public string? TargetFramework { get; set; }
 
-            [CommandOption("--strict")]
+            [CommandOption("-e|--exclude <PACKAGE>")]
+            [Description("One or more packages to exclude.")]
+            public string[]? Ignore { get; set; }
+
+            [CommandOption("-s|--strict")]
             [Description("Returns exit code 0 only if no conflicts were found.")]
             public bool Strict { get; set; }
         }
@@ -32,13 +34,25 @@ namespace Snitch.Commands
             var project = ProjectBuilder.Build(settings.ProjectPath, settings.TargetFramework);
             var result = ProjectAnalyzer.Analyze(project);
 
-            // Write the report.
-            ProjectReporter.Write(result);
+            if (settings.Ignore?.Length > 0)
+            {
+                // Filter packages that should be excluded.
+                result = result.Filter(settings.Ignore);
+            }
 
-            // Return exit code.
-            return settings.Strict
-                ? (result.NoPackagesToRemove ? 0 : -1)
-                : 0;
+            ProjectReporter.WriteToConsole(result);
+
+            return GetExitCode(settings, result);
+        }
+
+        private static int GetExitCode(Settings settings, ProjectAnalyzerResult result)
+        {
+            if (settings.Strict && !result.NoPackagesToRemove)
+            {
+                return -1;
+            }
+
+            return 0;
         }
     }
 }

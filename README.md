@@ -31,3 +31,10 @@ Useful for continuous integration._
 ```
 > snitch MyProject.csproj --tfm net462 --strict
 ```
+
+_Examine a specific project using a specific target framework moniker
+and make sure that the packages Foo and Bar are excluded from the result.
+
+```
+> snitch MyProject.csproj --tfm net462 --exclude Foo --exclude Bar
+```

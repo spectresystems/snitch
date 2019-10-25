@@ -4,7 +4,7 @@ namespace Snitch.Analysis
 {
     public static class ProjectReporter
     {
-        public static void Write(ProjectAnalyzerResult result)
+        public static void WriteToConsole(ProjectAnalyzerResult result)
         {
             Console.WriteLine();
 

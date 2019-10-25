@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -5,6 +6,8 @@ namespace Snitch.Analysis
 {
     public sealed class ProjectAnalyzerResult
     {
+        private readonly List<PackageToRemove> _packages;
+
         public IReadOnlyList<PackageToRemove> CanBeRemoved { get; }
         public IReadOnlyList<PackageToRemove> MightBeRemoved { get; }
 
@@ -12,8 +15,21 @@ namespace Snitch.Analysis
 
         public ProjectAnalyzerResult(IEnumerable<PackageToRemove> packages)
         {
+            _packages = new List<PackageToRemove>(packages ?? throw new ArgumentNullException(nameof(packages)));
+
             CanBeRemoved = new List<PackageToRemove>(packages.Where(p => p.CanBeRemoved));
             MightBeRemoved = new List<PackageToRemove>(packages.Where(p => p.VersionMismatch));
+        }
+
+        public ProjectAnalyzerResult Filter(string[]? packages)
+        {
+            if (packages == null)
+            {
+                return this;
+            }
+
+            var filtered = _packages.Where(p => !packages.Contains(p.Package.Name, StringComparer.OrdinalIgnoreCase));
+            return new ProjectAnalyzerResult(filtered);
         }
     }
 }
