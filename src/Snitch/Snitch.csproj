@@ -2,13 +2,38 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <LangVersion>8.0</LangVersion>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <NoWarn>1701;1702;SA0001</NoWarn>
+    <Nullable>enable</Nullable>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>snitch</ToolCommandName>
   </PropertyGroup>
 
+  <!-- NuGet package info -->
+  <PropertyGroup>
+    <Description>A tool that help you find transitive package references.</Description>
+    <Company>Spectre Systems AB</Company>
+    <Copyright>Spectre Systems AB</Copyright>
+    <Authors>Patrik Svensson</Authors>
+  </PropertyGroup>
+
+  <!-- Packages -->
   <ItemGroup>
     <PackageReference Include="Buildalyzer" Version="2.4.0" />
     <PackageReference Include="NuGet.Frameworks" Version="5.3.0" />
+    <PackageReference Include="Semver" Version="2.0.4" />
     <PackageReference Include="Spectre.Cli" Version="0.28.0" />
+  </ItemGroup>
+
+  <!-- Static analysis -->
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.66">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Analyzers" Version="2.1.0">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

@@ -1,9 +1,8 @@
-﻿using Snitch.Analyzing;
-using Spectre.Cli;
 using System;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
+using Snitch.Analysis;
+using Spectre.Cli;
 
 namespace Snitch.Commands
 {
@@ -11,101 +10,75 @@ namespace Snitch.Commands
     {
         public sealed class Settings : CommandSettings
         {
-            [CommandArgument(0, "<PROJECT>")]
+            [CommandArgument(0, "[PROJECT]")]
             [Description("The project you want to analyze.")]
-            public string ProjectPath { get; set; }
+            public string ProjectPath { get; set; } = string.Empty;
 
             [CommandOption("-t|--tfm <MONIKER>")]
             [Description("The target framework moniker to analyze.")]
-            public string TargetFramework { get; set; }
+            public string? TargetFramework { get; set; }
+
+            [CommandOption("--strict")]
+            [Description("Returns exit code 0 only if no conflicts were found.")]
+            public bool Strict { get; set; }
         }
 
         public override ValidationResult Validate(CommandContext context, Settings settings)
         {
-            if (!File.Exists(settings.ProjectPath))
+            if (!string.IsNullOrWhiteSpace(settings.ProjectPath))
             {
-                return ValidationResult.Error("Project does not exist.");
+                settings.ProjectPath = Path.GetFullPath(settings.ProjectPath);
+                if (!File.Exists(settings.ProjectPath))
+                {
+                    return ValidationResult.Error("Project does not exist.");
+                }
             }
+            else
+            {
+                var working = Environment.CurrentDirectory;
+                var projects = Directory.GetFiles(working, "*.csproj");
+                if (projects.Length == 0)
+                {
+                    return ValidationResult.Error("No project file found.");
+                }
+
+                if (projects.Length > 1)
+                {
+                    return ValidationResult.Error("More than one project file found.");
+                }
+
+                settings.ProjectPath = Path.GetFullPath(projects[0]);
+            }
+
             return base.Validate(context, settings);
         }
 
         public override int Execute(CommandContext context, Settings settings)
         {
-            // Output the result.
+            // Header
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine();
             Console.Write("Analysing project ");
             Console.Write(Path.GetFileNameWithoutExtension(settings.ProjectPath));
             Console.WriteLine("...");
             Console.WriteLine();
             Console.ResetColor();
 
-            // Analyze the provided project.
-            var project = DependencyWalker.Collect(settings.ProjectPath, settings.TargetFramework);
+            // Analyze the project.
+            var project = ProjectBuilder.Build(settings.ProjectPath, settings.TargetFramework);
+            var result = ProjectAnalyzer.Analyze(project);
 
-            // Process the analyzed project.
-            var result = Analyzer.Analyze(project);
+            // Write the report.
+            ProjectReporter.Write(result);
 
-            if (result.Count == 0)
+            // Return success.
+            if (settings.Strict)
             {
-                // Output the result.
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine();
-                Console.WriteLine("No transitive packages to remove.");
-                Console.WriteLine();
-                Console.ResetColor();
+                return result.NoPackagesToRemove ? 0 : -1;
             }
             else
             {
-                Console.WriteLine();
-
-                if (result.Any(x => x.CanBeRemoved))
-                {
-                    // Output the result.
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("The following packages can be removed:");
-                    Console.WriteLine();
-                    Console.ResetColor();
-
-                    foreach (var item in result.Where(x => x.CanBeRemoved))
-                    {
-                        Console.ForegroundColor = ConsoleColor.Cyan;
-                        Console.Write("   {0} ", item.Package.Package.Name);
-                        Console.ForegroundColor = ConsoleColor.DarkGray;
-                        Console.WriteLine(" (referenced by {0})", item.OriginalLocation.Project.Filename);
-                        Console.ResetColor();
-                    }
-                    Console.WriteLine();
-                }
-                if (result.Any(x => x.VersionMismatch))
-                {
-                    // Output the result.
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("The following packages might be removed:");
-                    Console.WriteLine();
-                    Console.ResetColor();
-
-                    foreach (var item in result.Where(x => x.VersionMismatch))
-                    {
-                        Console.ForegroundColor = ConsoleColor.Cyan;
-                        Console.Write("   {0}", item.Package.Package.Name);
-                        Console.ForegroundColor = ConsoleColor.DarkGray;
-                        Console.WriteLine(" (referenced by {0})", item.OriginalLocation.Project.Filename);
-                        Console.Write("      ");
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.Write(item.Package.Package.Version);
-                        Console.ForegroundColor = ConsoleColor.DarkGray;
-                        Console.Write(" -> ");
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.Write(item.OriginalLocation.Package.Version);
-                        Console.WriteLine();
-                        Console.ResetColor();
-                    }
-                    Console.WriteLine();
-                }
+                return 0;
             }
-
-            return 0;
         }
     }
 }
