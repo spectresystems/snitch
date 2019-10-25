@@ -33,7 +33,7 @@ Useful for continuous integration._
 ```
 
 _Examine a specific project using a specific target framework moniker
-and make sure that the packages Foo and Bar are excluded from the result.
+and make sure that the packages Foo and Bar are excluded from the result._
 
 ```
 > snitch MyProject.csproj --tfm net462 --exclude Foo --exclude Bar
