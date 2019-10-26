@@ -7,7 +7,7 @@ using Snitch.Analysis.Utilities;
 
 namespace Snitch.Analysis
 {
-    public static class ProjectBuilder
+    internal static class ProjectBuilder
     {
         public static Project Build(string path, string? tfm)
         {
@@ -25,6 +25,16 @@ namespace Snitch.Analysis
 
         public static Project Analyze(AnalyzerManager manager, string path, string? tfm, Dictionary<string, Project> built)
         {
+            if (manager == null)
+            {
+                throw new ArgumentNullException(nameof(manager));
+            }
+
+            if (built == null)
+            {
+                throw new ArgumentNullException(nameof(built));
+            }
+
             path = Path.GetFullPath(path);
 
             // Already built this project?
@@ -38,11 +48,20 @@ namespace Snitch.Analysis
             var result = Build(manager, project, tfm);
             if (result == null)
             {
-                throw new InvalidOperationException($"Could not build {path}");
+                throw new InvalidOperationException($"Could not build {path}.");
             }
 
-            // Set the target framework.
+            // Get the asset path.
+            var assetPath = result.GetProjectAssetsFilePath();
+            if (!File.Exists(assetPath))
+            {
+                // Todo: Make sure this exists in future
+                throw new InvalidOperationException($"{assetPath} not found. Please run 'dotnet restore'.");
+            }
+
+            // Set project information.
             project.TargetFramework = result.TargetFramework;
+            project.LockFilePath = result.GetProjectAssetsFilePath();
 
             // Add the project to the built list.
             built.Add(Path.GetFileName(path), project);

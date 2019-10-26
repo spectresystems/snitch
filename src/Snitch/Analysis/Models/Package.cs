@@ -5,7 +5,7 @@ using Semver;
 namespace Snitch.Analysis
 {
     [DebuggerDisplay("{Name,nq} ({Version,nq})")]
-    public sealed class Package
+    internal sealed class Package
     {
         public string Name { get; }
         public SemVersion Version { get; }

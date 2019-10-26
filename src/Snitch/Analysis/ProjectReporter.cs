@@ -1,10 +1,11 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Snitch.Analysis
 {
-    public static class ProjectReporter
+    internal static class ProjectReporter
     {
-        public static void WriteToConsole(ProjectAnalyzerResult result)
+        public static void WriteToConsole([NotNull] ProjectAnalyzerResult result)
         {
             Console.WriteLine();
 

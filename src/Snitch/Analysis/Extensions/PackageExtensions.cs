@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace Snitch.Analysis
 {
-    public static class PackageExtensions
+    internal static class PackageExtensions
     {
         public static bool ContainsPackage(this IEnumerable<ProjectPackage> source, Package package)
         {
-            return source.Any(x => x.Package.Name.Equals(package.Name));
+            return source.Any(x => x.Package.Name.Equals(package.Name, StringComparison.OrdinalIgnoreCase));
         }
 
         public static ProjectPackage FindProjectPackage(this IEnumerable<ProjectPackage> source, Package package)

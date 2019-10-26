@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using Snitch.Analysis;
 using Snitch.Analysis.Utilities;
 using Spectre.Cli;

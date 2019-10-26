@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Snitch.Analysis
 {
-    public sealed class ProjectAnalyzerResult
+    internal sealed class ProjectAnalyzerResult
     {
         private readonly List<PackageToRemove> _packages;
 

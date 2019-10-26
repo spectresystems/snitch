@@ -5,8 +5,13 @@ using NuGet.Frameworks;
 
 namespace Snitch.Analysis
 {
-    public static class AnalyzerResultExtensions
+    internal static class AnalyzerResultExtensions
     {
+        public static string? GetProjectAssetsFilePath(this AnalyzerResult result)
+        {
+            return result?.GetProperty("ProjectAssetsFile");
+        }
+
         public static string GetNearestFrameworkMoniker(this IEnumerable<AnalyzerResult> source, string framework)
         {
             var current = NuGetFramework.Parse(framework, DefaultFrameworkNameProvider.Instance);
