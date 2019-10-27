@@ -1,11 +1,11 @@
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using Snitch.Analysis;
 using Snitch.Analysis.Utilities;
 using Spectre.Cli;
 
 namespace Snitch.Commands
 {
+    [Description("Shows transitive package dependencies that can be removed")]
     public sealed class AnalyzeCommand : Command<AnalyzeCommand.Settings>
     {
         public sealed class Settings : CommandSettings

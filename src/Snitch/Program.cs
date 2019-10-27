@@ -20,6 +20,8 @@ namespace Snitch
                 config.AddExample(new[] { "Project.csproj", "-e", "Foo", "-e", "Bar" });
                 config.AddExample(new[] { "Project.csproj", "--tfm", "net462" });
                 config.AddExample(new[] { "Project.csproj", "--tfm", "net462", "--strict" });
+
+                config.AddCommand<VersionCommand>("version");
             });
 
             return await app.RunAsync(args);
