@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Fixtures\**" />
+    <EmbeddedResource Remove="Fixtures\**" />
+    <None Remove="Fixtures\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Expected\Baz.output" />
+    <None Remove="Expected\Baz_exclude.output" />
+    <None Remove="Expected\Baz_netstandard20.output" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Expected\Baz_exclude.output" />
+    <EmbeddedResource Include="Expected\Baz_netstandard20.output" />
+    <EmbeddedResource Include="Expected\Baz.output" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="Shouldly" Version="3.0.2" />
+    <PackageReference Include="SimpleExec" Version="6.1.0" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="coverlet.collector" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Snitch\Snitch.csproj" />
+  </ItemGroup>
+
+</Project>

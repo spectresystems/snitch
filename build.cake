@@ -21,8 +21,18 @@ Task("Build")
     });
 });
 
-Task("Pack")
+Task("Run-Tests")
     .IsDependentOn("Build")
+    .Does(() => 
+{
+    DotNetCoreTest("./src/Snitch.Tests/Snitch.Tests.csproj", new DotNetCoreTestSettings 
+    {
+        Configuration = "Release"
+    });
+});
+
+Task("Pack")
+    .IsDependentOn("Run-Tests")
     .Does(() => 
 {
     DotNetCorePack("./src/Snitch.sln", new DotNetCorePackSettings

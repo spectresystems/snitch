@@ -8,6 +8,10 @@ namespace Snitch.Commands
     [Description("Shows transitive package dependencies that can be removed")]
     public sealed class AnalyzeCommand : Command<AnalyzeCommand.Settings>
     {
+        private readonly ProjectBuilder _builder;
+        private readonly ProjectAnalyzer _analyzer;
+        private readonly ProjectReporter _reporter;
+
         public sealed class Settings : CommandSettings
         {
             [CommandArgument(0, "[PROJECT]")]
@@ -27,13 +31,20 @@ namespace Snitch.Commands
             public bool Strict { get; set; }
         }
 
+        public AnalyzeCommand(IConsole console)
+        {
+            _builder = new ProjectBuilder(console);
+            _analyzer = new ProjectAnalyzer();
+            _reporter = new ProjectReporter(console);
+        }
+
         public override int Execute(CommandContext context, Settings settings)
         {
             settings.ProjectPath = PathUtility.GetProjectPath(settings.ProjectPath);
 
             // Analyze the project.
-            var project = ProjectBuilder.Build(settings.ProjectPath, settings.TargetFramework);
-            var result = ProjectAnalyzer.Analyze(project);
+            var project = _builder.Build(settings.ProjectPath, settings.TargetFramework);
+            var result = _analyzer.Analyze(project);
 
             if (settings.Ignore?.Length > 0)
             {
@@ -41,7 +52,7 @@ namespace Snitch.Commands
                 result = result.Filter(settings.Ignore);
             }
 
-            ProjectReporter.WriteToConsole(result);
+            _reporter.WriteToConsole(result);
 
             return GetExitCode(settings, result);
         }

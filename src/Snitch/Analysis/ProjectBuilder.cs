@@ -7,9 +7,16 @@ using Snitch.Analysis.Utilities;
 
 namespace Snitch.Analysis
 {
-    internal static class ProjectBuilder
+    internal sealed class ProjectBuilder
     {
-        public static Project Build(string path, string? tfm)
+        private readonly IConsole _console;
+
+        public ProjectBuilder(IConsole console)
+        {
+            _console = console ?? throw new ArgumentNullException(nameof(console));
+        }
+
+        public Project Build(string path, string? tfm)
         {
             Console.Write("Analysing project ");
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -23,7 +30,7 @@ namespace Snitch.Analysis
             return Analyze(manager, path, tfm, built);
         }
 
-        public static Project Analyze(AnalyzerManager manager, string path, string? tfm, Dictionary<string, Project> built)
+        private Project Analyze(AnalyzerManager manager, string path, string? tfm, Dictionary<string, Project> built)
         {
             if (manager == null)
             {
@@ -87,16 +94,16 @@ namespace Snitch.Analysis
             return project;
         }
 
-        private static AnalyzerResult Build(AnalyzerManager manager, Project project, string? tfm)
+        private AnalyzerResult Build(AnalyzerManager manager, Project project, string? tfm)
         {
-            Console.Write("Building ");
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write(project.Name);
-            Console.ResetColor();
-            Console.Write(" (");
-            Console.Write(tfm ?? "?");
-            Console.Write(")");
-            Console.WriteLine("...");
+            _console.Write("Building ");
+            _console.ForegroundColor = ConsoleColor.Cyan;
+            _console.Write(project.Name);
+            _console.ResetColor();
+            _console.Write(" (");
+            _console.Write(tfm ?? "?");
+            _console.Write(")");
+            _console.WriteLine("...");
 
             var projectAnalyzer = manager.GetProject(project.Path);
             var results = (IEnumerable<AnalyzerResult>)projectAnalyzer.Build();

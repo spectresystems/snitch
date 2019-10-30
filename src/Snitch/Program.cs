@@ -1,5 +1,8 @@
+using System;
+using System.IO;
 using System.Threading.Tasks;
 using Snitch.Commands;
+using Snitch.Utilities;
 using Spectre.Cli;
 
 namespace Snitch
@@ -8,7 +11,14 @@ namespace Snitch
     {
         public static async Task<int> Main(string[] args)
         {
-            var app = new CommandApp<AnalyzeCommand>();
+            return await Run(new DefaultConsole(), args);
+        }
+
+        public static async Task<int> Run(IConsole console, string[] args)
+        {
+            var app = new CommandApp(new TypeRegistrar(console));
+
+            app.SetDefaultCommand<AnalyzeCommand>();
             app.Configure(config =>
             {
                 config.SetApplicationName("snitch");

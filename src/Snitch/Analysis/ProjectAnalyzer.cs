@@ -7,9 +7,9 @@ using NuGet.ProjectModel;
 
 namespace Snitch.Analysis
 {
-    internal static class ProjectAnalyzer
+    internal sealed class ProjectAnalyzer
     {
-        public static ProjectAnalyzerResult Analyze(Project project)
+        public ProjectAnalyzerResult Analyze(Project project)
         {
             if (project == null)
             {
@@ -18,7 +18,7 @@ namespace Snitch.Analysis
 
             // Analyze the project.
             var result = new List<PackageToRemove>();
-            AnalyzeProject(project, result);
+            AnalyzeProject(project, project, result);
 
             if (project.LockFilePath != null)
             {
@@ -30,10 +30,10 @@ namespace Snitch.Analysis
             return new ProjectAnalyzerResult(result);
         }
 
-        private static List<ProjectPackage> AnalyzeProject(Project project, List<PackageToRemove> result)
+        private List<ProjectPackage> AnalyzeProject(Project root, Project project, List<PackageToRemove> result)
         {
             var accumulated = new List<ProjectPackage>();
-            result = result ?? new List<PackageToRemove>();
+            result ??= new List<PackageToRemove>();
 
             if (project.ProjectReferences.Count > 0)
             {
@@ -41,13 +41,12 @@ namespace Snitch.Analysis
                 foreach (var child in project.ProjectReferences)
                 {
                     // Analyze the project recursively.
-                    var childResult = AnalyzeProject(child, result);
-                    foreach (var item in childResult)
+                    foreach (var item in AnalyzeProject(root, child, result))
                     {
                         // Didn't exist previously in the list of accumulated packages?
                         if (!accumulated.ContainsPackage(item.Package))
                         {
-                            accumulated.Add(new ProjectPackage(child, item.Package));
+                            accumulated.Add(new ProjectPackage(item.Project, item.Package));
                         }
                     }
                 }
@@ -61,7 +60,10 @@ namespace Snitch.Analysis
                     {
                         if (!result.ContainsPackage(found.Package))
                         {
-                            result.Add(new PackageToRemove(project, package, found));
+                            if (project.Name.Equals(root.Name, StringComparison.OrdinalIgnoreCase))
+                            {
+                                result.Add(new PackageToRemove(project, package, found));
+                            }
                         }
                     }
                     else

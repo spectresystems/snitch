@@ -3,19 +3,26 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Snitch.Analysis
 {
-    internal static class ProjectReporter
+    internal class ProjectReporter
     {
-        public static void WriteToConsole([NotNull] ProjectAnalyzerResult result)
+        private readonly IConsole _console;
+
+        public ProjectReporter(IConsole console)
         {
-            Console.WriteLine();
+            _console = console ?? throw new ArgumentNullException(nameof(console));
+        }
+
+        public void WriteToConsole([NotNull] ProjectAnalyzerResult result)
+        {
+            _console.WriteLine();
 
             if (result.NoPackagesToRemove)
             {
                 // Output the result.
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("No packages to remove.");
-                Console.WriteLine();
-                Console.ResetColor();
+                _console.ForegroundColor = ConsoleColor.Green;
+                _console.WriteLine("No packages to remove.");
+                _console.WriteLine();
+                _console.ResetColor();
                 return;
             }
 
@@ -23,60 +30,60 @@ namespace Snitch.Analysis
             if (result.CanBeRemoved.Count > 0)
             {
                 // Output the result.
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("The following packages can be removed:");
-                Console.WriteLine();
-                Console.ResetColor();
+                _console.ForegroundColor = ConsoleColor.Yellow;
+                _console.WriteLine("The following packages can be removed:");
+                _console.WriteLine();
+                _console.ResetColor();
 
                 foreach (var item in result.CanBeRemoved)
                 {
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.Write("   {0}", item.Package.Name);
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
-                    Console.WriteLine(" (ref by {0})", item.Original.Project.Name);
-                    Console.ResetColor();
+                    _console.ForegroundColor = ConsoleColor.Cyan;
+                    _console.Write("   {0}", item.Package.Name);
+                    _console.ForegroundColor = ConsoleColor.DarkGray;
+                    _console.WriteLine(" (ref by {0})", item.Original.Project.Name);
+                    _console.ResetColor();
                 }
 
-                Console.WriteLine();
+                _console.WriteLine();
             }
 
             // Packages that might be removed.
             if (result.MightBeRemoved.Count > 0)
             {
                 // Output the result.
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("The following packages might be removed:");
-                Console.WriteLine();
-                Console.ResetColor();
+                _console.ForegroundColor = ConsoleColor.Yellow;
+                _console.WriteLine("The following packages might be removed:");
+                _console.WriteLine();
+                _console.ResetColor();
 
                 foreach (var item in result.MightBeRemoved)
                 {
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.Write("   {0}", item.Package.Name);
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
-                    Console.WriteLine(" (ref by {0})", item.Original.Project.Name);
-                    Console.Write("      ");
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write(item.Package.Version);
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    _console.ForegroundColor = ConsoleColor.Cyan;
+                    _console.Write("   {0}", item.Package.Name);
+                    _console.ForegroundColor = ConsoleColor.DarkGray;
+                    _console.WriteLine(" (ref by {0})", item.Original.Project.Name);
+                    _console.Write("      ");
+                    _console.ForegroundColor = ConsoleColor.Yellow;
+                    _console.Write(item.Package.Version.ToString());
+                    _console.ForegroundColor = ConsoleColor.DarkGray;
 
                     if (item.Package.Version > item.Original.Package.Version)
                     {
-                        Console.Write(" <- ");
+                        _console.Write(" <- ");
                     }
                     else
                     {
-                        Console.Write(" -> ");
+                        _console.Write(" -> ");
                     }
 
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write(item.Original.Package.Version);
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
-                    Console.WriteLine($" ({item.Original.Project.Name})");
-                    Console.ResetColor();
+                    _console.ForegroundColor = ConsoleColor.Yellow;
+                    _console.Write(item.Original.Package.Version.ToString());
+                    _console.ForegroundColor = ConsoleColor.DarkGray;
+                    _console.WriteLine($" ({item.Original.Project.Name})");
+                    _console.ResetColor();
                 }
 
-                Console.WriteLine();
+                _console.WriteLine();
             }
         }
     }
