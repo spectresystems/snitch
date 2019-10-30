@@ -2,6 +2,24 @@
 
 A tool that help you find transitive package references.
 
+```
+> snitch Foo.csproj --tfm net462
+
+Building Foo (net462)...
+Building Bar (netstandard2.0)...
+Building Baz (netstandard2.0)...
+
+The following packages can be removed:
+
+   Autofac (ref by Baz)
+   Newtonsoft.Json (ref by Bar)
+
+The following packages might be removed:
+
+   Castle.Core (ref by Baz)
+      4.4.0 <- 4.3.1 (Baz)
+```
+
 ## Installation
 
 ```
