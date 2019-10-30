@@ -1,6 +1,8 @@
 # Snitch
 
-A tool that help you find transitive package references.
+A tool that help you find transitive package references that can be removed.
+
+## Example
 
 ```
 > snitch Foo.csproj --tfm net462
@@ -56,3 +58,23 @@ and make sure that the packages Foo and Bar are excluded from the result._
 ```
 > snitch MyProject.csproj --tfm net462 --exclude Foo --exclude Bar
 ```
+
+## Building Snitch from source
+
+To build and run the tests, you will need Cake installed as a 
+[dotnet tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools)
+on your computer.
+
+```
+> dotnet tool install cake.tool -g
+```
+
+When Cake is installed you can build the solution (and run all tests) by
+calling it from the repository root.
+
+```
+> dotnet cake
+```
+
+
+
