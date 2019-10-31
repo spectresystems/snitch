@@ -16,13 +16,13 @@ namespace Snitch.Analysis
             Version = ParseSemanticVersion(version ?? throw new ArgumentNullException(nameof(version)));
         }
 
-        private static SemVersion ParseSemanticVersion(string version)
+        private SemVersion ParseSemanticVersion(string version)
         {
             if (!SemVersion.TryParse(version, out var semanticVersion))
             {
                 if (!System.Version.TryParse(version, out var notSemanticVersion))
                 {
-                    throw new ArgumentException($"Version '{version}' is not valid.", nameof(version));
+                    throw new ArgumentException($"Version '{version}' for package '{Name}' is not valid.", nameof(version));
                 }
 
                 semanticVersion = SemVersion.Parse(notSemanticVersion.ToString(3));
