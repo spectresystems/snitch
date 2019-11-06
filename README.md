@@ -59,6 +59,13 @@ and make sure that the packages Foo and Bar are excluded from the result._
 > snitch MyProject.csproj --tfm net462 --exclude Foo --exclude Bar
 ```
 
+_Examine a specific project using a specific target framework moniker
+and exclude the project OtherProject from analysis._
+
+```
+> snitch MyProject.csproj --tfm net462 --skip OtherProject
+```
+
 ## Building Snitch from source
 
 To build and run the tests, you will need Cake installed as a 
