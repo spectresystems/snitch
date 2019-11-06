@@ -16,7 +16,7 @@ namespace Snitch.Analysis
             _console = console ?? throw new ArgumentNullException(nameof(console));
         }
 
-        public Project Build(string path, string? tfm)
+        public Project Build(string path, string? tfm, string[]? skip)
         {
             Console.Write("Analysing project ");
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -27,10 +27,15 @@ namespace Snitch.Analysis
             var manager = new AnalyzerManager();
             var built = new Dictionary<string, Project>(StringComparer.OrdinalIgnoreCase);
 
-            return Analyze(manager, path, tfm, built);
+            return Analyze(manager, path, tfm, skip, built);
         }
 
-        private Project Analyze(AnalyzerManager manager, string path, string? tfm, Dictionary<string, Project> built)
+        private Project Analyze(
+            AnalyzerManager manager,
+            string path,
+            string? tfm,
+            string[]? skip,
+            Dictionary<string, Project> built)
         {
             if (manager == null)
             {
@@ -86,7 +91,17 @@ namespace Snitch.Analysis
             foreach (var projectReference in result.ProjectReferences)
             {
                 var projectReferencePath = PathUtility.GetPathRelativeToProject(project, projectReference);
-                var analyzedProjectReference = Analyze(manager, projectReferencePath, project.TargetFramework, built);
+
+                if (skip != null)
+                {
+                    var projectName = Path.GetFileNameWithoutExtension(projectReferencePath);
+                    if (skip.Contains(projectName, StringComparer.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+                }
+
+                var analyzedProjectReference = Analyze(manager, projectReferencePath, project.TargetFramework, skip, built);
 
                 project.ProjectReferences.Add(analyzedProjectReference);
             }
@@ -96,7 +111,7 @@ namespace Snitch.Analysis
 
         private AnalyzerResult Build(AnalyzerManager manager, Project project, string? tfm)
         {
-            _console.Write("Building ");
+            _console.Write("Analyzing ");
             _console.ForegroundColor = ConsoleColor.Cyan;
             _console.Write(project.Name);
             _console.ResetColor();

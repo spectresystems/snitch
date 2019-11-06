@@ -24,7 +24,11 @@ namespace Snitch.Commands
 
             [CommandOption("-e|--exclude <PACKAGE>")]
             [Description("One or more packages to exclude.")]
-            public string[]? Ignore { get; set; }
+            public string[]? Exclude { get; set; }
+
+            [CommandOption("--skip <PACKAGE>")]
+            [Description("One or more project references to exclude.")]
+            public string[]? Skip { get; set; }
 
             [CommandOption("-s|--strict")]
             [Description("Returns exit code 0 only if no conflicts were found.")]
@@ -43,13 +47,13 @@ namespace Snitch.Commands
             settings.ProjectPath = PathUtility.GetProjectPath(settings.ProjectPath);
 
             // Analyze the project.
-            var project = _builder.Build(settings.ProjectPath, settings.TargetFramework);
+            var project = _builder.Build(settings.ProjectPath, settings.TargetFramework, settings.Skip);
             var result = _analyzer.Analyze(project);
 
-            if (settings.Ignore?.Length > 0)
+            if (settings.Exclude?.Length > 0)
             {
                 // Filter packages that should be excluded.
-                result = result.Filter(settings.Ignore);
+                result = result.Filter(settings.Exclude);
             }
 
             _reporter.WriteToConsole(result);
