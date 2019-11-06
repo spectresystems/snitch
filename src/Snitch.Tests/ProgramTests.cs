@@ -74,6 +74,22 @@ namespace Sntich.Tests
             result.output.ShouldBe(expected);
         }
 
+        [Theory]
+        [EmbeddedResourceData("Snitch.Tests/Expected/Baz_skip.output")]
+        public async Task Should_Return_Expected_Result_For_Baz_When_Skipping_Project(string expected)
+        {
+            // Given
+            var fixture = new Fixture();
+            var project = fixture.GetProjectPath("Baz/Baz.csproj");
+
+            // When
+            var result = await fixture.Run(project, "--skip", "Bar");
+
+            // Then
+            result.exitCode.ShouldBe(0);
+            result.output.ShouldBe(expected);
+        }
+
         public sealed class Fixture
         {
             public string GetProjectPath(string path)

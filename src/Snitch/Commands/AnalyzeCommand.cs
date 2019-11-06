@@ -26,7 +26,7 @@ namespace Snitch.Commands
             [Description("One or more packages to exclude.")]
             public string[]? Exclude { get; set; }
 
-            [CommandOption("--skip <PACKAGE>")]
+            [CommandOption("--skip <PROJECT>")]
             [Description("One or more project references to exclude.")]
             public string[]? Skip { get; set; }
 
