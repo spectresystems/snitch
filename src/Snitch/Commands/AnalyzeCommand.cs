@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Snitch.Analysis;
 using Snitch.Analysis.Utilities;
 using Spectre.Cli;
@@ -14,9 +16,9 @@ namespace Snitch.Commands
 
         public sealed class Settings : CommandSettings
         {
-            [CommandArgument(0, "[PROJECT]")]
-            [Description("The project you want to analyze.")]
-            public string ProjectPath { get; set; } = string.Empty;
+            [CommandArgument(0, "[PROJECT|SOLUTION]")]
+            [Description("The project or solution you want to analyze.")]
+            public string ProjectOrSolutionPath { get; set; } = string.Empty;
 
             [CommandOption("-t|--tfm <MONIKER>")]
             [Description("The target framework moniker to analyze.")]
@@ -44,26 +46,37 @@ namespace Snitch.Commands
 
         public override int Execute(CommandContext context, Settings settings)
         {
-            settings.ProjectPath = PathUtility.GetProjectPath(settings.ProjectPath);
+            var projectsToAnalyze = PathUtility.GetProjectPaths(settings.ProjectOrSolutionPath);
 
-            // Analyze the project.
-            var project = _builder.Build(settings.ProjectPath, settings.TargetFramework, settings.Skip);
-            var result = _analyzer.Analyze(project);
+            var analyzerResults = new List<ProjectAnalyzerResult>();
 
-            if (settings.Exclude?.Length > 0)
+            foreach (var projectToAnalyze in projectsToAnalyze)
             {
-                // Filter packages that should be excluded.
-                result = result.Filter(settings.Exclude);
+                // Analyze the project.
+                var project = _builder.Build(projectToAnalyze, settings.TargetFramework, settings.Skip);
+                var result = _analyzer.Analyze(project);
+
+                if (settings.Exclude?.Length > 0)
+                {
+                    // Filter packages that should be excluded.
+                    result = result.Filter(settings.Exclude);
+                }
+
+                analyzerResults.Add(result);
+                _reporter.WriteToConsole(result);
             }
 
-            _reporter.WriteToConsole(result);
+            if (analyzerResults.Count > 1)
+            {
+                _reporter.WriteToConsole(analyzerResults);
+            }
 
-            return GetExitCode(settings, result);
+            return GetExitCode(settings, analyzerResults);
         }
 
-        private static int GetExitCode(Settings settings, ProjectAnalyzerResult result)
+        private static int GetExitCode(Settings settings, List<ProjectAnalyzerResult> result)
         {
-            if (settings.Strict && !result.NoPackagesToRemove)
+            if (settings.Strict && result.Any(r => !r.NoPackagesToRemove))
             {
                 return -1;
             }

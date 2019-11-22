@@ -16,10 +16,26 @@ namespace Sntich.Tests
         {
             // Given
             var fixture = new Fixture();
-            var project = fixture.GetProjectPath("Baz/Baz.csproj");
+            var project = fixture.GetPath("Baz/Baz.csproj");
 
             // When
             var result = await fixture.Run(project);
+
+            // Then
+            result.exitCode.ShouldBe(0);
+            result.output.ShouldBe(expected);
+        }
+
+        [Theory]
+        [EmbeddedResourceData("Snitch.Tests/Expected/Solution.output")]
+        public async Task Should_Return_Expected_Result_For_Solution_Not_Specifying_Framework(string expected)
+        {
+            // Given
+            var fixture = new Fixture();
+            var solution = fixture.GetPath("Snitch.Tests.Fixtures.sln");
+
+            // When
+            var result = await fixture.Run(solution);
 
             // Then
             result.exitCode.ShouldBe(0);
@@ -32,7 +48,7 @@ namespace Sntich.Tests
         {
             // Given
             var fixture = new Fixture();
-            var project = fixture.GetProjectPath("Baz/Baz.csproj");
+            var project = fixture.GetPath("Baz/Baz.csproj");
 
             // When
             var result = await fixture.Run(project, "--tfm", "netstandard2.0");
@@ -48,7 +64,7 @@ namespace Sntich.Tests
         {
             // Given
             var fixture = new Fixture();
-            var project = fixture.GetProjectPath("Baz/Baz.csproj");
+            var project = fixture.GetPath("Baz/Baz.csproj");
 
             // When
             var result = await fixture.Run(project, "--tfm", "netstandard2.0", "--strict");
@@ -64,7 +80,7 @@ namespace Sntich.Tests
         {
             // Given
             var fixture = new Fixture();
-            var project = fixture.GetProjectPath("Baz/Baz.csproj");
+            var project = fixture.GetPath("Baz/Baz.csproj");
 
             // When
             var result = await fixture.Run(project, "--exclude", "Autofac");
@@ -80,7 +96,7 @@ namespace Sntich.Tests
         {
             // Given
             var fixture = new Fixture();
-            var project = fixture.GetProjectPath("Baz/Baz.csproj");
+            var project = fixture.GetPath("Baz/Baz.csproj");
 
             // When
             var result = await fixture.Run(project, "--skip", "Bar");
@@ -92,7 +108,7 @@ namespace Sntich.Tests
 
         public sealed class Fixture
         {
-            public string GetProjectPath(string path)
+            public string GetPath(string path)
             {
                 var workingDirectory = Environment.CurrentDirectory;
                 var solutionDirectory = Path.GetFullPath(Path.Combine(workingDirectory, "../../../../Snitch.Tests.Fixtures"));

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using Xunit.Sdk;
 
 namespace Snitch.Tests.Utilities

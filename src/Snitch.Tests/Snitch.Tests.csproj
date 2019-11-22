@@ -16,9 +16,11 @@
     <None Remove="Expected\Baz_exclude.output" />
     <None Remove="Expected\Baz_netstandard20.output" />
     <None Remove="Expected\Baz_skip.output" />
+    <None Remove="Expected\Solution.output" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Expected\Solution.output" />
     <EmbeddedResource Include="Expected\Baz_skip.output" />
     <EmbeddedResource Include="Expected\Baz_exclude.output" />
     <EmbeddedResource Include="Expected\Baz_netstandard20.output" />
