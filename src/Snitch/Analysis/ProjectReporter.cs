@@ -81,6 +81,7 @@ namespace Snitch.Analysis
                     {
                         WritePackageCanBeRemoved(item);
                     }
+
                     _console.WriteLine();
                 }
             }
