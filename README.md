@@ -37,6 +37,13 @@ target framework._
 > snitch MyProject.csproj
 ```
 
+_Examine a specific solution using the first built 
+target framework._
+
+```
+> snitch MySolution.sln
+```
+
 _Examine a specific project using a specific
 target framework moniker._
 

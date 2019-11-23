@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using System.Threading.Tasks;
 using Snitch.Commands;
 using Snitch.Utilities;
@@ -30,6 +28,11 @@ namespace Snitch
                 config.AddExample(new[] { "Project.csproj", "-e", "Foo", "-e", "Bar" });
                 config.AddExample(new[] { "Project.csproj", "--tfm", "net462" });
                 config.AddExample(new[] { "Project.csproj", "--tfm", "net462", "--strict" });
+
+                config.AddExample(new[] { "Solution.sln" });
+                config.AddExample(new[] { "Solution.sln", "-e", "Foo", "-e", "Bar" });
+                config.AddExample(new[] { "Solution.sln", "--tfm", "net462" });
+                config.AddExample(new[] { "Solution.sln", "--tfm", "net462", "--strict" });
 
                 config.AddCommand<VersionCommand>("version");
             });

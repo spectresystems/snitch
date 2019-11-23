@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using Microsoft.Build.Construction;
 
 namespace Snitch.Analysis.Utilities
 {
@@ -10,13 +13,13 @@ namespace Snitch.Analysis.Utilities
             var rootPath = Path.GetDirectoryName(root.Path);
             if (rootPath == null)
             {
-                throw new InvalidOperationException("Could not get projet root path.");
+                throw new InvalidOperationException("Could not get project root path.");
             }
 
             return Path.GetFullPath(Path.Combine(rootPath, path));
         }
 
-        public static string GetProjectPath(string? path)
+        public static List<string> GetProjectPaths(string? path)
         {
             if (!string.IsNullOrWhiteSpace(path))
             {
@@ -25,36 +28,62 @@ namespace Snitch.Analysis.Utilities
                 {
                     if (Directory.Exists(path))
                     {
-                        return FindProject(path);
+                        return FindProjects(path);
                     }
 
-                    throw new InvalidOperationException("Project do not exist.");
+                    throw new InvalidOperationException("Project or solution file do not exist.");
                 }
 
-                return path;
+                return GetProjectsFromFile(path);
             }
-            else
-            {
-                return FindProject();
-            }
+
+            return FindProjects();
         }
 
-        private static string FindProject(string? root = null)
+        private static List<string> GetProjectsFromFile(string path)
+        {
+            if (path.EndsWith(".csproj", StringComparison.InvariantCulture))
+            {
+                return new List<string> { path };
+            }
+
+            if (path.EndsWith(".sln", StringComparison.InvariantCulture))
+            {
+                return GetProjectsFromSolution(path);
+            }
+
+            throw new InvalidOperationException("Project or solution file do not exist.");
+        }
+
+        private static List<string> FindProjects(string? root = null)
         {
             root ??= Environment.CurrentDirectory;
 
-            var projects = Directory.GetFiles(root, "*.csproj");
-            if (projects.Length == 0)
+            var slns = Directory.GetFiles(root, "*.sln");
+            if (slns.Length == 0)
             {
-                throw new InvalidOperationException("No project file found.");
+                var subProjects = Directory.GetFiles(root, "*.csproj");
+                if (subProjects.Length == 0)
+                {
+                    throw new InvalidOperationException("No project or solution file found.");
+                }
+            }
+            else if (slns.Length > 1)
+            {
+                throw new InvalidOperationException("More than one solution file found.");
+            }
+            else
+            {
+                return GetProjectsFromSolution(slns[0]);
             }
 
-            if (projects.Length > 1)
-            {
-                throw new InvalidOperationException("More than one project file found.");
-            }
+            return new List<string>();
+        }
 
-            return projects[0];
+        private static List<string> GetProjectsFromSolution(string solution)
+        {
+            var solutionFile = SolutionFile.Parse(solution);
+            return solutionFile.ProjectsInOrder.Where(p => p.ProjectType == SolutionProjectType.KnownToBeMSBuildFormat).Select(p => p.AbsolutePath).Distinct().ToList();
         }
     }
 }

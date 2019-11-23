@@ -1,0 +1,24 @@
+Analyzing Foo (?)...
+
+No packages to remove.
+
+Analyzing Bar (?)...
+Analyzing Foo (netstandard2.0)...
+
+The following packages can be removed:
+
+   Autofac (ref by Foo)
+
+Analyzing Baz (?)...
+Analyzing Bar (netstandard2.0)...
+Analyzing Foo (netstandard2.0)...
+
+The following packages can be removed:
+
+   Autofac (ref by Foo)
+
+The following packages can be removed from : Bar
+   Autofac (ref by Foo)
+
+The following packages can be removed from : Baz
+   Autofac (ref by Foo)
