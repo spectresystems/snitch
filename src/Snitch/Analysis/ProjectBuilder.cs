@@ -16,21 +16,23 @@ namespace Snitch.Analysis
             _console = console ?? throw new ArgumentNullException(nameof(console));
         }
 
-        public Project Build(string path, string? tfm, string[]? skip)
+        public ProjectBuildResult Build(string path, string? tfm, string[]? skip, IEnumerable<Project>? cache = null)
         {
-            Console.Write("Analysing project ");
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write(Path.GetFileNameWithoutExtension(path));
-            Console.ResetColor();
-            Console.WriteLine("...\n");
-
             var manager = new AnalyzerManager();
-            var built = new Dictionary<string, Project>(StringComparer.OrdinalIgnoreCase);
+            var built = cache?.ToDictionary(x => x.File, x => x, StringComparer.OrdinalIgnoreCase)
+                ?? new Dictionary<string, Project>(StringComparer.OrdinalIgnoreCase);
 
-            return Analyze(manager, path, tfm, skip, built);
+            // Build the specified project.
+            var project = Build(manager, path, tfm, skip, built);
+
+            // Get all dependencies which are all built projects minus the project.
+            var dependencies = new HashSet<Project>(built.Values, new ProjectComparer());
+            dependencies.Remove(project);
+
+            return new ProjectBuildResult(project, dependencies);
         }
 
-        private Project Analyze(
+        private Project Build(
             AnalyzerManager manager,
             string path,
             string? tfm,
@@ -101,7 +103,7 @@ namespace Snitch.Analysis
                     }
                 }
 
-                var analyzedProjectReference = Analyze(manager, projectReferencePath, project.TargetFramework, skip, built);
+                var analyzedProjectReference = Build(manager, projectReferencePath, project.TargetFramework, skip, built);
 
                 project.ProjectReferences.Add(analyzedProjectReference);
             }
@@ -111,14 +113,20 @@ namespace Snitch.Analysis
 
         private AnalyzerResult Build(AnalyzerManager manager, Project project, string? tfm)
         {
-            _console.Write("Analyzing ");
+            _console.Write("   -> Analyzing ");
             _console.ForegroundColor = ConsoleColor.Cyan;
             _console.Write(project.Name);
             _console.ResetColor();
-            _console.Write(" (");
-            _console.Write(tfm ?? "?");
-            _console.Write(")");
-            _console.WriteLine("...");
+
+            if (!string.IsNullOrWhiteSpace(tfm))
+            {
+                _console.ForegroundColor = ConsoleColor.DarkGray;
+                _console.Write(" (");
+                _console.Write(tfm);
+                _console.Write(")");
+                _console.ResetColor();
+                _console.WriteLine();
+            }
 
             var projectAnalyzer = manager.GetProject(project.Path);
             var results = (IEnumerable<AnalyzerResult>)projectAnalyzer.Build();
@@ -129,7 +137,18 @@ namespace Snitch.Analysis
                 results = results.Where(p => p.TargetFramework.Equals(closest, StringComparison.OrdinalIgnoreCase));
             }
 
-            return results.FirstOrDefault();
+            var result = results.FirstOrDefault();
+            if (string.IsNullOrWhiteSpace(tfm))
+            {
+                _console.ForegroundColor = ConsoleColor.DarkGray;
+                _console.Write(" (");
+                _console.Write(result.TargetFramework);
+                _console.ForegroundColor = ConsoleColor.DarkGray;
+                _console.WriteLine(")");
+                _console.ResetColor();
+            }
+
+            return result;
         }
     }
 }

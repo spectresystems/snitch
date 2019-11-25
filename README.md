@@ -5,21 +5,27 @@ A tool that help you find transitive package references that can be removed.
 ## Example
 
 ```
-> snitch Foo.csproj --tfm net462
+> snitch --tfm net462
 
-Building Foo (net462)...
-Building Bar (netstandard2.0)...
-Building Baz (netstandard2.0)...
+Processing Foo.sln...
+   -> Analyzing Foo (net462)
+   -> Analyzing Bar (net462)
+   -> Analyzing Baz (net462)
+   -> Analyzing Qux (net462)
+   -> Analyzing Zap (net462)
 
-The following packages can be removed:
+The following packages can be removed from Bar
 
-   Autofac (ref by Baz)
-   Newtonsoft.Json (ref by Bar)
+   * Autofac (ref by Foo)
 
-The following packages might be removed:
+The following packages can be removed from Baz
 
-   Castle.Core (ref by Baz)
-      4.4.0 <- 4.3.1 (Baz)
+   * Autofac (ref by Foo)
+
+The following packages <might> be removed from Qux
+
+   * Autofac 4.9.3
+     Downgraded from 4.9.4 in Foo
 ```
 
 ## Installation
@@ -30,18 +36,11 @@ The following packages might be removed:
 
 ## Usage
 
-_Examine a specific project using the first built 
+_Examine a specific project or solution using the first built 
 target framework._
 
 ```
 > snitch MyProject.csproj
-```
-
-_Examine a specific solution using the first built 
-target framework._
-
-```
-> snitch MySolution.sln
 ```
 
 _Examine a specific project using a specific
@@ -89,6 +88,3 @@ calling it from the repository root.
 ```
 > dotnet cake
 ```
-
-
-
