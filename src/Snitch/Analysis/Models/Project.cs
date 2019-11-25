@@ -8,6 +8,7 @@ namespace Snitch.Analysis
     internal sealed class Project
     {
         public string Path { get; }
+        public string File { get; }
         public string Name { get; }
         public string TargetFramework { get; set; }
         public string? LockFilePath { get; set; }
@@ -17,6 +18,7 @@ namespace Snitch.Analysis
         public Project(string path)
         {
             Path = path ?? throw new ArgumentNullException(nameof(path));
+            File = System.IO.Path.GetFileName(Path);
             Name = System.IO.Path.GetFileNameWithoutExtension(Path);
             TargetFramework = string.Empty;
             ProjectReferences = new List<Project>();

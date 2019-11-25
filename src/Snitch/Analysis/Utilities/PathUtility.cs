@@ -19,7 +19,7 @@ namespace Snitch.Analysis.Utilities
             return Path.GetFullPath(Path.Combine(rootPath, path));
         }
 
-        public static List<string> GetProjectPaths(string? path)
+        public static List<string> GetProjectPaths(string? path, out string entry)
         {
             if (!string.IsNullOrWhiteSpace(path))
             {
@@ -28,16 +28,17 @@ namespace Snitch.Analysis.Utilities
                 {
                     if (Directory.Exists(path))
                     {
-                        return FindProjects(path);
+                        return FindProjects(path, out entry);
                     }
 
                     throw new InvalidOperationException("Project or solution file do not exist.");
                 }
 
+                entry = path;
                 return GetProjectsFromFile(path);
             }
 
-            return FindProjects();
+            return FindProjects(null, out entry);
         }
 
         private static List<string> GetProjectsFromFile(string path)
@@ -55,11 +56,12 @@ namespace Snitch.Analysis.Utilities
             throw new InvalidOperationException("Project or solution file do not exist.");
         }
 
-        private static List<string> FindProjects(string? root = null)
+        private static List<string> FindProjects(string? root, out string entry)
         {
             root ??= Environment.CurrentDirectory;
 
             var slns = Directory.GetFiles(root, "*.sln");
+
             if (slns.Length == 0)
             {
                 var subProjects = Directory.GetFiles(root, "*.csproj");
@@ -67,6 +69,13 @@ namespace Snitch.Analysis.Utilities
                 {
                     throw new InvalidOperationException("No project or solution file found.");
                 }
+                else if (subProjects.Length > 1)
+                {
+                    throw new InvalidOperationException("More than one project file found.");
+                }
+
+                entry = subProjects[0];
+                return new List<string>(new[] { subProjects[0] });
             }
             else if (slns.Length > 1)
             {
@@ -74,10 +83,9 @@ namespace Snitch.Analysis.Utilities
             }
             else
             {
+                entry = slns[0];
                 return GetProjectsFromSolution(slns[0]);
             }
-
-            return new List<string>();
         }
 
         private static List<string> GetProjectsFromSolution(string solution)

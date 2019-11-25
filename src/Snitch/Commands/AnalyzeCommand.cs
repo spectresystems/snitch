@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using Snitch.Analysis;
 using Snitch.Analysis.Utilities;
@@ -10,6 +12,7 @@ namespace Snitch.Commands
     [Description("Shows transitive package dependencies that can be removed")]
     public sealed class AnalyzeCommand : Command<AnalyzeCommand.Settings>
     {
+        private readonly IConsole _console;
         private readonly ProjectBuilder _builder;
         private readonly ProjectAnalyzer _analyzer;
         private readonly ProjectReporter _reporter;
@@ -39,6 +42,7 @@ namespace Snitch.Commands
 
         public AnalyzeCommand(IConsole console)
         {
+            _console = console;
             _builder = new ProjectBuilder(console);
             _analyzer = new ProjectAnalyzer();
             _reporter = new ProjectReporter(console);
@@ -46,30 +50,55 @@ namespace Snitch.Commands
 
         public override int Execute(CommandContext context, Settings settings)
         {
-            var projectsToAnalyze = PathUtility.GetProjectPaths(settings.ProjectOrSolutionPath);
+            var projectsToAnalyze = PathUtility.GetProjectPaths(settings.ProjectOrSolutionPath, out var entry);
+
+            // Remove all projects that we want to skip.
+            projectsToAnalyze.RemoveAll(p =>
+            {
+                var projectName = Path.GetFileNameWithoutExtension(p);
+                return settings.Skip?.Contains(projectName, StringComparer.OrdinalIgnoreCase) ?? false;
+            });
+
+            _console.WriteLine();
+            _console.Write("Processing ");
+            _console.ForegroundColor = ConsoleColor.Yellow;
+            _console.Write(Path.GetFileName(entry));
+            _console.ResetColor();
+            _console.WriteLine("...");
+
+            var targetFramework = settings.TargetFramework;
 
             var analyzerResults = new List<ProjectAnalyzerResult>();
-
+            var projectCache = new HashSet<Project>(new ProjectComparer());
             foreach (var projectToAnalyze in projectsToAnalyze)
             {
+                // Perform a design time build of the project.
+                var buildResult = _builder.Build(
+                    projectToAnalyze,
+                    targetFramework,
+                    settings.Skip,
+                    projectCache);
+
+                // Update the cache of built projects.
+                projectCache.Add(buildResult.Project);
+                foreach (var item in buildResult.Dependencies)
+                {
+                    projectCache.Add(item);
+                }
+
                 // Analyze the project.
-                var project = _builder.Build(projectToAnalyze, settings.TargetFramework, settings.Skip);
-                var result = _analyzer.Analyze(project);
+                var analyzeResult = _analyzer.Analyze(buildResult.Project);
 
                 if (settings.Exclude?.Length > 0)
                 {
                     // Filter packages that should be excluded.
-                    result = result.Filter(settings.Exclude);
+                    analyzeResult = analyzeResult.Filter(settings.Exclude);
                 }
 
-                analyzerResults.Add(result);
-                _reporter.WriteToConsole(result);
+                analyzerResults.Add(analyzeResult);
             }
 
-            if (analyzerResults.Count > 1)
-            {
-                _reporter.WriteToConsole(analyzerResults);
-            }
+            _reporter.WriteToConsole(analyzerResults);
 
             return GetExitCode(settings, analyzerResults);
         }
