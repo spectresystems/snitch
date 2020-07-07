@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using NuGet.Versioning;
 
 namespace Snitch.Analysis
 {
@@ -89,7 +90,7 @@ namespace Snitch.Analysis
             _console.ForegroundColor = ConsoleColor.Gray;
             _console.WriteLine(item.Package.Version.ToString());
 
-            if (item.Package.Version > item.Original.Package.Version)
+            if (new VersionComparer().Compare(item.Package.Version, item.Original.Package.Version) > 0)
             {
                 _console.ForegroundColor = ConsoleColor.DarkGray;
                 _console.Write("     Updated from ");

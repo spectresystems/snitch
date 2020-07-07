@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
 
+using NuGet.Versioning;
+
 namespace Snitch.Analysis
 {
     [DebuggerDisplay("{PackageDescription(),nq}")]
@@ -10,8 +12,8 @@ namespace Snitch.Analysis
         public Package Package { get; }
         public ProjectPackage Original { get; }
 
-        public bool CanBeRemoved => Package.Version == Original.Package.Version;
-        public bool VersionMismatch => Package.Version != Original.Package.Version;
+        public bool CanBeRemoved => new VersionComparer().Equals(Package.Version, Original.Package.Version);
+        public bool VersionMismatch => !new VersionComparer().Equals(Package.Version, Original.Package.Version);
 
         public PackageToRemove(Project project, Package package, ProjectPackage original)
         {

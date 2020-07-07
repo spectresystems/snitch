@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics;
-using Semver;
+using NuGet.Versioning;
 
 namespace Snitch.Analysis
 {
@@ -8,27 +8,22 @@ namespace Snitch.Analysis
     internal sealed class Package
     {
         public string Name { get; }
-        public SemVersion Version { get; }
+        public NuGetVersion Version { get; }
 
         public Package(string name, string version)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
-            Version = ParseSemanticVersion(version ?? throw new ArgumentNullException(nameof(version)));
-        }
+            Version = ParseSemanticVersion(version ?? throw new ArgumentNullException(nameof(version)), Name);
 
-        private SemVersion ParseSemanticVersion(string version)
-        {
-            if (!SemVersion.TryParse(version, out var semanticVersion))
+            static NuGetVersion ParseSemanticVersion(string version, string name)
             {
-                if (!System.Version.TryParse(version, out var notSemanticVersion))
+                if (!NuGetVersion.TryParse(version, out var semanticVersion))
                 {
-                    throw new ArgumentException($"Version '{version}' for package '{Name}' is not valid.", nameof(version));
+                    throw new ArgumentException($"Version '{version}' for package '{name}' is not valid.", nameof(version));
                 }
 
-                semanticVersion = SemVersion.Parse(notSemanticVersion.ToString(3));
+                return semanticVersion;
             }
-
-            return semanticVersion;
         }
     }
 }
