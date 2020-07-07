@@ -1,4 +1,8 @@
-var version = Argument<string>("packageversion", "1.0.0");
+var semanticVersion = Argument<string>("packageversion", "1.0.0");
+var version = semanticVersion.Split(new[] { '-' }).FirstOrDefault() ?? semanticVersion;
+
+Information("Version: {0}", semanticVersion);
+Information("Legacy version: {0}", version);
 
 Task("Clean")
     .Does(() => 
@@ -41,7 +45,7 @@ Task("Pack")
         NoRestore = true,
         NoBuild = true,
         MSBuildSettings = new DotNetCoreMSBuildSettings()
-            .WithProperty("PackageVersion", version)
+            .WithProperty("PackageVersion", semanticVersion)
     });
 });
 

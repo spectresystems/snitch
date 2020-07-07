@@ -88,14 +88,14 @@ namespace Snitch.Analysis
             _console.ForegroundColor = ConsoleColor.Cyan;
             _console.Write("{0} ", item.Package.Name);
             _console.ForegroundColor = ConsoleColor.Gray;
-            _console.WriteLine(item.Package.Version.ToString());
+            _console.WriteLine(item.Package.GetVersionString());
 
-            if (new VersionComparer().Compare(item.Package.Version, item.Original.Package.Version) > 0)
+            if (item.Package.IsGreaterThan(item.Original.Package, out var indeterminate))
             {
                 _console.ForegroundColor = ConsoleColor.DarkGray;
-                _console.Write("     Updated from ");
+                _console.Write(indeterminate ? "     Might be updated from " : "     Updated from ");
                 _console.ForegroundColor = ConsoleColor.Gray;
-                _console.Write(item.Original.Package.Version.ToString());
+                _console.Write(item.Original.Package.GetVersionString());
                 _console.ForegroundColor = ConsoleColor.DarkGray;
                 _console.Write(" in ");
                 _console.ForegroundColor = ConsoleColor.Cyan;
@@ -105,9 +105,9 @@ namespace Snitch.Analysis
             else
             {
                 _console.ForegroundColor = ConsoleColor.DarkGray;
-                _console.Write("     Downgraded from ");
+                _console.Write(indeterminate ? "     Does not match " : "     Downgraded from ");
                 _console.ForegroundColor = ConsoleColor.Gray;
-                _console.Write(item.Original.Package.Version.ToString());
+                _console.Write(item.Original.Package.GetVersionString());
                 _console.ForegroundColor = ConsoleColor.DarkGray;
                 _console.Write(" in ");
                 _console.ForegroundColor = ConsoleColor.Cyan;
