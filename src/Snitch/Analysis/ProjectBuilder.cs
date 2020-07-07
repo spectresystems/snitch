@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+
 using Buildalyzer;
+
 using Snitch.Analysis.Utilities;
 
 namespace Snitch.Analysis
@@ -103,8 +105,27 @@ namespace Snitch.Analysis
                     }
                 }
 
-                var analyzedProjectReference = Build(manager, projectReferencePath, project.TargetFramework, skip, built);
+                if (!projectReferencePath.EndsWith("csproj", StringComparison.OrdinalIgnoreCase))
+                {
+                    _console.Write("   -> Skipping Non C# Project ");
+                    _console.ForegroundColor = ConsoleColor.Cyan;
+                    _console.Write(project.Name);
+                    _console.ResetColor();
+                    if (!string.IsNullOrWhiteSpace(tfm))
+                    {
+                        _console.ForegroundColor = ConsoleColor.DarkGray;
+                        _console.Write(" (");
+                        _console.Write(tfm);
+                        _console.Write(")");
+                        _console.ResetColor();
+                    }
 
+                    _console.WriteLine();
+
+                    continue;
+                }
+
+                var analyzedProjectReference = Build(manager, projectReferencePath, project.TargetFramework, skip, built);
                 project.ProjectReferences.Add(analyzedProjectReference);
             }
 
