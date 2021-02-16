@@ -44,6 +44,7 @@ Task("Pack")
         Configuration = "Release",
         NoRestore = true,
         NoBuild = true,
+        OutputDirectory = "./.artifacts",
         MSBuildSettings = new DotNetCoreMSBuildSettings()
             .WithProperty("PackageVersion", semanticVersion)
     });

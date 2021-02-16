@@ -92,17 +92,7 @@ and exclude the project OtherProject from analysis._
 
 ## Building Snitch from source
 
-To build and run the tests, you will need Cake installed as a 
-[dotnet tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools)
-on your computer.
-
 ```
-> dotnet tool install cake.tool -g
-```
-
-When Cake is installed you can build the solution (and run all tests) by
-calling it from the repository root.
-
-```
+> dotnet tool restore
 > dotnet cake
 ```

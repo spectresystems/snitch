@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <LangVersion>8.0</LangVersion>
-    <TargetFramework>net5.0</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
     <NoWarn>1701;1702;SA0001</NoWarn>
     <Nullable>enable</Nullable>
     <PackAsTool>true</PackAsTool>
