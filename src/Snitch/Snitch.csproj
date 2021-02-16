@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <LangVersion>8.0</LangVersion>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <NoWarn>1701;1702;SA0001</NoWarn>
     <Nullable>enable</Nullable>
     <PackAsTool>true</PackAsTool>
@@ -21,16 +21,12 @@
 
   <!-- Packages -->
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="4.9.4" />
-    <PackageReference Include="Buildalyzer" Version="2.4.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.6">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="NuGet.Frameworks" Version="5.3.1" />
-    <PackageReference Include="NuGet.ProjectModel" Version="5.3.1" />
-    <PackageReference Include="NuGet.Versioning" Version="5.3.1" />
-    <PackageReference Include="Spectre.Cli" Version="0.28.0" />
+    <PackageReference Include="Autofac" Version="6.1.0" />
+    <PackageReference Include="Buildalyzer" Version="3.2.0" />
+    <PackageReference Include="NuGet.Frameworks" Version="5.8.1" />
+    <PackageReference Include="NuGet.ProjectModel" Version="5.8.1" />
+    <PackageReference Include="NuGet.Versioning" Version="5.8.1" />
+    <PackageReference Include="Spectre.Console" Version="0.37.1-preview.0.24" />
   </ItemGroup>
 
   <!-- Static analysis -->
@@ -38,8 +34,12 @@
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.66">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Roslynator.Analyzers" Version="2.1.0">
+    <PackageReference Include="Roslynator.Analyzers" Version="3.1.0">
       <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="5.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 

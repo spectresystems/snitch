@@ -97,6 +97,12 @@ namespace Snitch.Analysis
             var target = lockfile.PackageSpec.TargetFrameworks.FirstOrDefault(
                 x => x.FrameworkName.Framework.Equals(framework.Framework, StringComparison.OrdinalIgnoreCase));
 
+            // Could we not find the target?
+            if (target == null)
+            {
+                throw new InvalidOperationException("Could not determine target framework");
+            }
+
             var result = new List<PackageToRemove>();
             foreach (var package in packages)
             {

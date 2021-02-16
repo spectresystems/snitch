@@ -1,18 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Snitch.Analysis;
 using Snitch.Analysis.Utilities;
-using Spectre.Cli;
+using Spectre.Console;
+using Spectre.Console.Cli;
 
 namespace Snitch.Commands
 {
     [Description("Shows transitive package dependencies that can be removed")]
     public sealed class AnalyzeCommand : Command<AnalyzeCommand.Settings>
     {
-        private readonly IConsole _console;
+        private readonly IAnsiConsole _console;
         private readonly ProjectBuilder _builder;
         private readonly ProjectAnalyzer _analyzer;
         private readonly ProjectReporter _reporter;
@@ -40,15 +42,15 @@ namespace Snitch.Commands
             public bool Strict { get; set; }
         }
 
-        public AnalyzeCommand(IConsole console)
+        public AnalyzeCommand(IAnsiConsole console)
         {
-            _console = console;
+            _console = console ?? throw new ArgumentNullException(nameof(console));
             _builder = new ProjectBuilder(console);
             _analyzer = new ProjectAnalyzer();
             _reporter = new ProjectReporter(console);
         }
 
-        public override int Execute(CommandContext context, Settings settings)
+        public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
         {
             var projectsToAnalyze = PathUtility.GetProjectPaths(settings.ProjectOrSolutionPath, out var entry);
 
@@ -59,48 +61,51 @@ namespace Snitch.Commands
                 return settings.Skip?.Contains(projectName, StringComparer.OrdinalIgnoreCase) ?? false;
             });
 
-            _console.WriteLine();
-            _console.Write("Processing ");
-            _console.ForegroundColor = ConsoleColor.Yellow;
-            _console.Write(Path.GetFileName(entry));
-            _console.ResetColor();
-            _console.WriteLine("...");
-
             var targetFramework = settings.TargetFramework;
-
             var analyzerResults = new List<ProjectAnalyzerResult>();
             var projectCache = new HashSet<Project>(new ProjectComparer());
-            foreach (var projectToAnalyze in projectsToAnalyze)
+
+            _console.WriteLine();
+
+            return _console.Status().Start($"Analyzing...", ctx =>
             {
-                // Perform a design time build of the project.
-                var buildResult = _builder.Build(
-                    projectToAnalyze,
-                    targetFramework,
-                    settings.Skip,
-                    projectCache);
+                ctx.Refresh();
 
-                // Update the cache of built projects.
-                projectCache.Add(buildResult.Project);
-                foreach (var item in buildResult.Dependencies)
+                _console.MarkupLine($"Analyzing [yellow]{Path.GetFileName(entry)}[/]");
+
+                foreach (var projectToAnalyze in projectsToAnalyze)
                 {
-                    projectCache.Add(item);
+                    // Perform a design time build of the project.
+                    var buildResult = _builder.Build(
+                        projectToAnalyze,
+                        targetFramework,
+                        settings.Skip,
+                        projectCache);
+
+                    // Update the cache of built projects.
+                    projectCache.Add(buildResult.Project);
+                    foreach (var item in buildResult.Dependencies)
+                    {
+                        projectCache.Add(item);
+                    }
+
+                    // Analyze the project.
+                    var analyzeResult = _analyzer.Analyze(buildResult.Project);
+                    if (settings.Exclude?.Length > 0)
+                    {
+                        // Filter packages that should be excluded.
+                        analyzeResult = analyzeResult.Filter(settings.Exclude);
+                    }
+
+                    analyzerResults.Add(analyzeResult);
                 }
 
-                // Analyze the project.
-                var analyzeResult = _analyzer.Analyze(buildResult.Project);
+                // Write the rport to the console
+                _reporter.WriteToConsole(analyzerResults);
 
-                if (settings.Exclude?.Length > 0)
-                {
-                    // Filter packages that should be excluded.
-                    analyzeResult = analyzeResult.Filter(settings.Exclude);
-                }
-
-                analyzerResults.Add(analyzeResult);
-            }
-
-            _reporter.WriteToConsole(analyzerResults);
-
-            return GetExitCode(settings, analyzerResults);
+                // Return the correct exit code.
+                return GetExitCode(settings, analyzerResults);
+            });
         }
 
         private static int GetExitCode(Settings settings, List<ProjectAnalyzerResult> result)

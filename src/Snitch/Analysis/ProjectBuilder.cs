@@ -4,25 +4,29 @@ using System.IO;
 using System.Linq;
 using Buildalyzer;
 using Snitch.Analysis.Utilities;
+using Spectre.Console;
 
 namespace Snitch.Analysis
 {
     internal sealed class ProjectBuilder
     {
-        private readonly IConsole _console;
+        private readonly IAnsiConsole _console;
 
-        public ProjectBuilder(IConsole console)
+        public ProjectBuilder(IAnsiConsole console)
         {
             _console = console ?? throw new ArgumentNullException(nameof(console));
         }
 
-        public ProjectBuildResult Build(string path, string? tfm, string[]? skip, IEnumerable<Project>? cache = null)
+        public ProjectBuildResult Build(
+            string path,
+            string? tfm,
+            string[]? skip,
+            IEnumerable<Project>? cache = null)
         {
             var manager = new AnalyzerManager();
             var built = cache?.ToDictionary(x => x.File, x => x, StringComparer.OrdinalIgnoreCase)
                 ?? new Dictionary<string, Project>(StringComparer.OrdinalIgnoreCase);
 
-            // Build the specified project.
             var project = Build(manager, path, tfm, skip, built);
 
             // Get all dependencies which are all built projects minus the project.
@@ -70,12 +74,12 @@ namespace Snitch.Analysis
             if (!File.Exists(assetPath))
             {
                 // Todo: Make sure this exists in future
-                throw new InvalidOperationException($"{assetPath} not found. Please run 'dotnet restore'.");
+                throw new InvalidOperationException($"{assetPath} not found. Please restore the project's dependencies before running Snitch.");
             }
 
             // Set project information.
             project.TargetFramework = result.TargetFramework;
-            project.LockFilePath = result.GetProjectAssetsFilePath();
+            project.LockFilePath = assetPath;
 
             // Add the project to the built list.
             built.Add(Path.GetFileName(path), project);
@@ -105,17 +109,15 @@ namespace Snitch.Analysis
 
                 if (!projectReferencePath.EndsWith("csproj", StringComparison.OrdinalIgnoreCase))
                 {
-                    _console.Write("   -> Skipping Non C# Project ");
-                    _console.ForegroundColor = ConsoleColor.Cyan;
-                    _console.Write(project.Name);
-                    _console.ResetColor();
+                    _console.MarkupLine("Skipping Non C# Project [aqua]{project.Name}[/]");
+
                     if (!string.IsNullOrWhiteSpace(tfm))
                     {
-                        _console.ForegroundColor = ConsoleColor.DarkGray;
-                        _console.Write(" (");
-                        _console.Write(tfm);
-                        _console.Write(")");
-                        _console.ResetColor();
+                        _console.MarkupLine("Skipping Non C# Project [aqua]{project.Name}[/] [grey] ({tfm})[/]");
+                    }
+                    else
+                    {
+                        _console.MarkupLine("Skipping Non C# Project [aqua]{project.Name}[/]");
                     }
 
                     _console.WriteLine();
@@ -130,25 +132,16 @@ namespace Snitch.Analysis
             return project;
         }
 
-        private AnalyzerResult Build(AnalyzerManager manager, Project project, string? tfm)
+        private IAnalyzerResult? Build(AnalyzerManager manager, Project project, string? tfm)
         {
-            _console.Write("   -> Analyzing ");
-            _console.ForegroundColor = ConsoleColor.Cyan;
-            _console.Write(project.Name);
-            _console.ResetColor();
+            var status = string.IsNullOrWhiteSpace(tfm)
+                ? $"Analyzing [aqua]{project.Name}[/] [grey](default)[/]..."
+                : $"Analyzing [aqua]{project.Name}[/] [grey]({tfm})[/]...";
 
-            if (!string.IsNullOrWhiteSpace(tfm))
-            {
-                _console.ForegroundColor = ConsoleColor.DarkGray;
-                _console.Write(" (");
-                _console.Write(tfm);
-                _console.Write(")");
-                _console.ResetColor();
-                _console.WriteLine();
-            }
+            _console.MarkupLine(status);
 
             var projectAnalyzer = manager.GetProject(project.Path);
-            var results = (IEnumerable<AnalyzerResult>)projectAnalyzer.Build();
+            var results = (IEnumerable<IAnalyzerResult>)projectAnalyzer.Build();
 
             if (!string.IsNullOrWhiteSpace(tfm))
             {
@@ -156,18 +149,7 @@ namespace Snitch.Analysis
                 results = results.Where(p => p.TargetFramework.Equals(closest, StringComparison.OrdinalIgnoreCase));
             }
 
-            var result = results.FirstOrDefault();
-            if (string.IsNullOrWhiteSpace(tfm))
-            {
-                _console.ForegroundColor = ConsoleColor.DarkGray;
-                _console.Write(" (");
-                _console.Write(result.TargetFramework);
-                _console.ForegroundColor = ConsoleColor.DarkGray;
-                _console.WriteLine(")");
-                _console.ResetColor();
-            }
-
-            return result;
+            return results.FirstOrDefault();
         }
     }
 }

@@ -1,0 +1,14 @@
+Analyzing...
+Analyzing Baz.csproj
+Analyzing Baz (default)...
+Analyzing Bar (netstandard2.0)...
+Analyzing Foo (netstandard2.0)...
+
+╭─────────────────────────────────────────╮
+│  Packages that can be removed from Baz: │
+│ ┌──────────────┬──────────────────────┐ │
+│ │ Package      │ Referenced by        │ │
+│ ├──────────────┼──────────────────────┤ │
+│ │ Autofac      │ Foo                  │ │
+│ └──────────────┴──────────────────────┘ │
+╰─────────────────────────────────────────╯

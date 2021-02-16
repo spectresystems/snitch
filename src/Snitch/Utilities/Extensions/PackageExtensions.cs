@@ -11,7 +11,7 @@ namespace Snitch.Analysis
             return source.Any(x => x.Package.Name.Equals(package.Name, StringComparison.OrdinalIgnoreCase));
         }
 
-        public static ProjectPackage FindProjectPackage(this IEnumerable<ProjectPackage> source, Package package)
+        public static ProjectPackage? FindProjectPackage(this IEnumerable<ProjectPackage> source, Package package)
         {
             return source.FirstOrDefault(p => p.Package.Name.Equals(package.Name, StringComparison.OrdinalIgnoreCase));
         }

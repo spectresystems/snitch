@@ -7,12 +7,12 @@ namespace Snitch.Analysis
 {
     internal static class AnalyzerResultExtensions
     {
-        public static string? GetProjectAssetsFilePath(this AnalyzerResult result)
+        public static string? GetProjectAssetsFilePath(this IAnalyzerResult result)
         {
             return result?.GetProperty("ProjectAssetsFile");
         }
 
-        public static string GetNearestFrameworkMoniker(this IEnumerable<AnalyzerResult> source, string framework)
+        public static string GetNearestFrameworkMoniker(this IEnumerable<IAnalyzerResult> source, string framework)
         {
             var current = NuGetFramework.Parse(framework, DefaultFrameworkNameProvider.Instance);
             return current.GetNearestFrameworkMoniker(source.Select(x => x.TargetFramework));

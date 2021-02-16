@@ -1,6 +1,7 @@
 using System;
 using Autofac;
-using Spectre.Cli;
+using Spectre.Console;
+using Spectre.Console.Cli;
 
 namespace Snitch.Utilities
 {
@@ -8,10 +9,9 @@ namespace Snitch.Utilities
     {
         private readonly ContainerBuilder _builder;
 
-        public TypeRegistrar(IConsole console)
+        public TypeRegistrar()
         {
             _builder = new ContainerBuilder();
-            _builder.RegisterInstance(console).As<IConsole>();
         }
 
         public ITypeResolver Build()
@@ -27,6 +27,11 @@ namespace Snitch.Utilities
         public void RegisterInstance(Type service, object implementation)
         {
             _builder.RegisterInstance(implementation).As(service);
+        }
+
+        public void RegisterLazy(Type service, Func<object> factory)
+        {
+            _builder.Register(_ => factory()).As(service);
         }
     }
 }
