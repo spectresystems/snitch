@@ -41,7 +41,8 @@ namespace Snitch.Analysis
             string path,
             string? tfm,
             string[]? skip,
-            Dictionary<string, Project> built)
+            Dictionary<string, Project> built,
+            int indentation = 0)
         {
             if (manager == null)
             {
@@ -63,7 +64,7 @@ namespace Snitch.Analysis
 
             project = new Project(path);
 
-            var result = Build(manager, project, tfm);
+            var result = Build(manager, project, tfm, indentation);
             if (result == null)
             {
                 throw new InvalidOperationException($"Could not build {path}.");
@@ -71,10 +72,23 @@ namespace Snitch.Analysis
 
             // Get the asset path.
             var assetPath = result.GetProjectAssetsFilePath();
-            if (!File.Exists(assetPath))
+            if (!string.IsNullOrWhiteSpace(assetPath))
             {
-                // Todo: Make sure this exists in future
-                throw new InvalidOperationException($"{assetPath} not found. Please restore the project's dependencies before running Snitch.");
+                if (!File.Exists(assetPath))
+                {
+                    // Todo: Make sure this exists in future
+                    throw new InvalidOperationException($"{assetPath} not found. Please restore the project's dependencies before running Snitch.");
+                }
+            }
+            else
+            {
+                var prefix = new string(' ', indentation * 2);
+                if (indentation > 0)
+                {
+                    prefix += "  ";
+                }
+
+                _console.MarkupLine($"{prefix}[yellow]WARN:[/] Old CSPROJ format can't be analyzed");
             }
 
             // Set project information.
@@ -125,18 +139,24 @@ namespace Snitch.Analysis
                     continue;
                 }
 
-                var analyzedProjectReference = Build(manager, projectReferencePath, project.TargetFramework, skip, built);
+                var analyzedProjectReference = Build(manager, projectReferencePath, project.TargetFramework, skip, built, indentation + 1);
                 project.ProjectReferences.Add(analyzedProjectReference);
             }
 
             return project;
         }
 
-        private IAnalyzerResult? Build(AnalyzerManager manager, Project project, string? tfm)
+        private IAnalyzerResult? Build(AnalyzerManager manager, Project project, string? tfm, int indentation)
         {
+            var prefix = new string(' ', indentation * 2);
+            if (indentation > 0)
+            {
+                prefix += "[grey]*[/] ";
+            }
+
             var status = string.IsNullOrWhiteSpace(tfm)
-                ? $"Analyzing [aqua]{project.Name}[/] [grey](default)[/]..."
-                : $"Analyzing [aqua]{project.Name}[/] [grey]({tfm})[/]...";
+                ? $"{prefix}Analyzing [aqua]{project.Name}[/]..."
+                : $"{prefix}Analyzing [aqua]{project.Name}[/] [grey]({tfm})[/]...";
 
             _console.MarkupLine(status);
 
