@@ -1,18 +1,21 @@
-# Snitch
+# <img src="/src/icon.png" height="30px"> Snitch
+
+[![NuGet Status](https://img.shields.io/nuget/v/Snitch.svg)](https://www.nuget.org/packages/Snitch/)
 
 A tool that help you find transitive package references that can be removed.
 
 ## Example
 
-```
-> snitch --tfm net462
-
-Analyzing Foo.sln
-Analyzing Foo (net462)...
-Analyzing Bar (net462)...
-Analyzing Baz (net462)...
-Analyzing Qux (net462)...
-Analyzing Zap (net462)...
+<!-- snippet: Solution.Default.verified.txt -->
+<a id='snippet-Solution.Default.verified.txt'></a>
+```txt
+Analyzing...
+Analyzing Snitch.Tests.Fixtures.sln
+Analyzing Foo...
+Analyzing Bar...
+Analyzing Baz...
+Analyzing Qux...
+Analyzing Zap...
 
 ╭──────────────────────────────────────────────────────────────╮
 │  Packages that can be removed from Bar:                      │
@@ -45,6 +48,8 @@ Analyzing Zap (net462)...
 │ └─────────────────┴─────────┴──────────────────────────────┘ │
 ╰──────────────────────────────────────────────────────────────╯
 ```
+<sup><a href='/src/Snitch.Tests/Expectations/Solution.Default.verified.txt#L1-L38' title='Snippet source file'>snippet source</a> | <a href='#snippet-Solution.Default.verified.txt' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
 
 ## Installation
 
@@ -96,3 +101,7 @@ and exclude the project OtherProject from analysis._
 > dotnet tool restore
 > dotnet cake
 ```
+
+## Icon
+
+[Hollow](https://thenounproject.com/term/stitch/1571973/) designed by [Ben Davis](https://thenounproject.com/smashicons/) from [The Noun Project](https://thenounproject.com).
