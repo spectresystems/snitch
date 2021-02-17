@@ -6,6 +6,12 @@ A tool that help you find transitive package references that can be removed.
 
 ## Example
 
+```
+> snitch --tfm net462
+```
+
+Results in:
+
 <!-- snippet: Solution.Default.verified.txt -->
 <a id='snippet-Solution.Default.verified.txt'></a>
 ```txt
