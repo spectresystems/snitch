@@ -86,3 +86,6 @@ packages
 
 # Windows
 Thumbs.db
+
+# Rider
+.idea/

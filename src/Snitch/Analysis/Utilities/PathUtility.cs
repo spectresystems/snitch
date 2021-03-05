@@ -43,7 +43,7 @@ namespace Snitch.Analysis.Utilities
 
         private static List<string> GetProjectsFromFile(string path)
         {
-            if (path.EndsWith(".csproj", StringComparison.InvariantCulture))
+            if (path.EndsWith("proj", StringComparison.InvariantCulture))
             {
                 return new List<string> { path };
             }

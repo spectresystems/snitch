@@ -126,5 +126,21 @@ namespace Sntich.Tests
                 return (exitCode, console.Output.Trim());
             }
         }
+
+        [Fact]
+        [Expectation("FSharp", "Default")]
+        public async Task Should_Return_Expected_Result_For_FSharp_Not_Specifying_Framework()
+        {
+            // Given
+            var fixture = new Fixture();
+            var project = Fixture.GetPath("FSharp/FSharp.fsproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
     }
 }
