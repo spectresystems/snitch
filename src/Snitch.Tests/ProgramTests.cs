@@ -1,13 +1,13 @@
 using Shouldly;
 using Snitch;
-using Snitch.Tests.Utilities;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 using Spectre.Console.Cli;
+using Spectre.Console.Testing;
+using VerifyTests;
 using Xunit;
 using VerifyXunit;
-using Spectre.Verify.Extensions;
 
 namespace Sntich.Tests
 {
@@ -121,7 +121,7 @@ namespace Sntich.Tests
 
             public static async Task<(int exitCode, string output)> Run(params string[] args)
             {
-                var console = new FakeConsole(supportsAnsi: false);
+                var console = new TestConsole { EmitAnsiSequences = false };
                 var exitCode = await Program.Run(args, c => c.ConfigureConsole(console));
                 return (exitCode, console.Output.Trim());
             }
