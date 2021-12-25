@@ -101,7 +101,7 @@ namespace Snitch.Analysis
             }
 
             _console.WriteLine();
-            _console.Render(
+            _console.Write(
                 new Panel(report)
                     .RoundedBorder()
                     .BorderColor(Color.Grey));

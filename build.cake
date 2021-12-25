@@ -5,19 +5,19 @@ Information("Version: {0}", semanticVersion);
 Information("Legacy version: {0}", version);
 
 Task("Clean")
-    .Does(() => 
+    .Does(() =>
 {
     CleanDirectory("./.artifacts");
 });
 
 Task("Build")
     .IsDependentOn("Clean")
-    .Does(() => 
+    .Does(() =>
 {
-    DotNetCoreBuild("./src/Snitch.sln", new DotNetCoreBuildSettings
+    DotNetBuild("./src/Snitch.sln", new DotNetBuildSettings
     {
         Configuration = "Release",
-        MSBuildSettings = new DotNetCoreMSBuildSettings()
+        MSBuildSettings = new DotNetMSBuildSettings()
             .TreatAllWarningsAs(MSBuildTreatAllWarningsAs.Error)
             .WithProperty("Version", version)
             .WithProperty("AssemblyVersion", version)
@@ -27,9 +27,9 @@ Task("Build")
 
 Task("Run-Tests")
     .IsDependentOn("Build")
-    .Does(() => 
+    .Does(() =>
 {
-    DotNetCoreTest("./src/Snitch.Tests/Snitch.Tests.csproj", new DotNetCoreTestSettings 
+    DotNetTest("./src/Snitch.Tests/Snitch.Tests.csproj", new DotNetTestSettings
     {
         Configuration = "Release"
     });
@@ -37,15 +37,15 @@ Task("Run-Tests")
 
 Task("Pack")
     .IsDependentOn("Run-Tests")
-    .Does(() => 
+    .Does(() =>
 {
-    DotNetCorePack("./src/Snitch.sln", new DotNetCorePackSettings
+    DotNetPack("./src/Snitch.sln", new DotNetPackSettings
     {
         Configuration = "Release",
         NoRestore = true,
         NoBuild = true,
         OutputDirectory = "./.artifacts",
-        MSBuildSettings = new DotNetCoreMSBuildSettings()
+        MSBuildSettings = new DotNetMSBuildSettings()
             .WithProperty("PackageVersion", semanticVersion)
     });
 });
