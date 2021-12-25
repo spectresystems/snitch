@@ -121,18 +121,11 @@ namespace Snitch.Analysis
                     }
                 }
 
-                if (!projectReferencePath.EndsWith("csproj", StringComparison.OrdinalIgnoreCase))
+                if (!projectReferencePath.EndsWith("csproj", StringComparison.OrdinalIgnoreCase) && !projectReferencePath.EndsWith("fsproj", StringComparison.OrdinalIgnoreCase))
                 {
-                    _console.MarkupLine("Skipping Non C# Project [aqua]{project.Name}[/]");
-
-                    if (!string.IsNullOrWhiteSpace(tfm))
-                    {
-                        _console.MarkupLine("Skipping Non C# Project [aqua]{project.Name}[/] [grey] ({tfm})[/]");
-                    }
-                    else
-                    {
-                        _console.MarkupLine("Skipping Non C# Project [aqua]{project.Name}[/]");
-                    }
+                    _console.MarkupLine(string.IsNullOrWhiteSpace(tfm)
+                        ? $"Skipping Non .NET Project [aqua]{project.Name}[/]"
+                        : $"Skipping Non .NET Project [aqua]{project.Name}[/] [grey] ({tfm})[/]");
 
                     _console.WriteLine();
 
