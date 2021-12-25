@@ -1,8 +1,6 @@
 using System;
 using System.Diagnostics;
 
-using NuGet.Versioning;
-
 namespace Snitch.Analysis
 {
     [DebuggerDisplay("{PackageDescription(),nq}")]
