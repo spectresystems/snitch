@@ -1,6 +1,5 @@
 using System;
 using Autofac;
-using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace Snitch.Utilities

@@ -1,4 +1,3 @@
-using Spectre.Verify.Extensions;
 using System.Runtime.CompilerServices;
 using VerifyTests;
 
