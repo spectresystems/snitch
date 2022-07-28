@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
 using NuGet.ProjectModel;
@@ -68,8 +69,7 @@ namespace Snitch.Analysis
                     }
                     else
                     {
-                        // Add the package to the list of accumulated packages.
-                        accumulated.Add(new ProjectPackage(project, package));
+                        AddToAccumulated(package);
                     }
                 }
             }
@@ -79,9 +79,20 @@ namespace Snitch.Analysis
                 {
                     if (!accumulated.ContainsPackage(item))
                     {
-                        accumulated.Add(new ProjectPackage(project, item));
+                        AddToAccumulated(item);
                     }
                 }
+            }
+
+            void AddToAccumulated(Package package)
+            {
+                if (package.PrivateAssets != null && package.PrivateAssets.Contains("compile"))
+                {
+                    return;
+                }
+
+                // Add the package to the list of accumulated packages.
+                accumulated.Add(new ProjectPackage(project, package));
             }
 
             return accumulated;

@@ -11,6 +11,8 @@ namespace Snitch.Analysis
         public NuGetVersion? Version { get; set; }
         public VersionRange? Range { get; }
 
+        public string? PrivateAssets { get; }
+
         public bool IsGreaterThan(Package package, out bool indeterminate)
         {
             indeterminate = true;
@@ -67,9 +69,10 @@ namespace Snitch.Analysis
             return Range?.OriginalString ?? "?";
         }
 
-        public Package(string name, string version)
+        public Package(string name, string version, string? privateAssets)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
+            PrivateAssets = privateAssets;
 
             if (NuGetVersion.TryParse(version, out var semanticVersion))
             {

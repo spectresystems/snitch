@@ -103,7 +103,9 @@ namespace Snitch.Analysis
             {
                 if (packageReference.Value.TryGetValue("Version", out var version))
                 {
-                    project.Packages.Add(new Package(packageReference.Key, version));
+                    var privateAssets = packageReference.Value.GetValueOrDefault("PrivateAssets");
+
+                    project.Packages.Add(new Package(packageReference.Key, version, privateAssets));
                 }
             }
 
