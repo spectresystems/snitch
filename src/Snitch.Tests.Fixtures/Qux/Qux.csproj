@@ -8,8 +8,6 @@
     <ProjectReference Include="..\Foo\Foo.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Autofac" Version="4.9.3" />
-  </ItemGroup>
+  
 
 </Project>
