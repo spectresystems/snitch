@@ -6,18 +6,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MarkdownSnippets.MsBuild" Version="24.2.2">
+    <PackageReference Include="MarkdownSnippets.MsBuild" Version="24.5.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
-    <PackageReference Include="Shouldly" Version="4.0.3" />
-    <PackageReference Include="SimpleExec" Version="8.0.0" />
-    <PackageReference Include="Spectre.Console.Testing" Version="0.43.0" />
-    <PackageReference Include="Spectre.Verify.Extensions" Version="0.5.0" />
-    <PackageReference Include="Verify.Xunit" Version="14.11.4" />
-    <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+    <PackageReference Include="Shouldly" Version="4.1.0" />
+    <PackageReference Include="SimpleExec" Version="11.0.0" />
+    <PackageReference Include="Spectre.Console.Testing" Version="0.44.0" />
+    <PackageReference Include="Spectre.Verify.Extensions" Version="17.1.6" />
+    
+    <PackageReference Include="xunit" Version="2.4.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

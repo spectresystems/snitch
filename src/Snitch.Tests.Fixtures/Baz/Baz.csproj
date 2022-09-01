@@ -1,12 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Autofac" Version="4.9.4" />
-  </ItemGroup>
+  
 
   <ItemGroup>
     <ProjectReference Include="..\Bar\Bar.csproj" />
