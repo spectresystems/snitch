@@ -40,6 +40,10 @@ namespace Snitch.Commands
             [CommandOption("-s|--strict")]
             [Description("Returns exit code 0 only if no conflicts were found.")]
             public bool Strict { get; set; }
+
+            [CommandOption("--no-prerelease")]
+            [Description("Verifies that all package references are not pre-releases.")]
+            public bool NoPreRelease { get; set; }
         }
 
         public AnalyzeCommand(IAnsiConsole console)
