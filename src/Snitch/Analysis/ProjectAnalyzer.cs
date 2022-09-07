@@ -28,7 +28,7 @@ namespace Snitch.Analysis
                 result = PruneResults(project, result);
             }
 
-            return new ProjectAnalyzerResult(project.Name, result);
+            return new ProjectAnalyzerResult(project, result);
         }
 
         private List<ProjectPackage> AnalyzeProject(Project root, Project project, List<PackageToRemove> result)

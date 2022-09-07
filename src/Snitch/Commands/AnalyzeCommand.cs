@@ -104,8 +104,8 @@ namespace Snitch.Commands
                     analyzerResults.Add(analyzeResult);
                 }
 
-                // Write the rport to the console
-                _reporter.WriteToConsole(analyzerResults);
+                // Write the report to the console
+                _reporter.WriteToConsole(analyzerResults, settings.NoPreRelease);
 
                 // Return the correct exit code.
                 return GetExitCode(settings, analyzerResults);
@@ -114,7 +114,7 @@ namespace Snitch.Commands
 
         private static int GetExitCode(Settings settings, List<ProjectAnalyzerResult> result)
         {
-            if (settings.Strict && result.Any(r => !r.NoPackagesToRemove))
+            if (settings.Strict && (result.Any(r => !r.NoPackagesToRemove) || (settings.NoPreRelease && result.Any(r => r.HasPreReleases))))
             {
                 return -1;
             }

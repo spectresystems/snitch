@@ -15,12 +15,13 @@ namespace Snitch.Analysis
             _console = console ?? throw new ArgumentNullException(nameof(console));
         }
 
-        public void WriteToConsole([NotNull] List<ProjectAnalyzerResult> results)
+        public void WriteToConsole([NotNull] List<ProjectAnalyzerResult> results, bool noPreRelease)
         {
             var resultsWithPackageToRemove = results.Where(r => r.CanBeRemoved.Count > 0).ToList();
             var resultsWithPackageMayBeRemove = results.Where(r => r.MightBeRemoved.Count > 0).ToList();
+            var resultsPreReleases = results.Where(r => r.PreReleasePackages.Count > 0).ToList();
 
-            if (results.All(x => x.NoPackagesToRemove))
+            if (results.All(x => x.NoPackagesToRemove) && (noPreRelease == false || resultsPreReleases.Count == 0))
             {
                 // Output the result.
                 _console.WriteLine();
@@ -98,6 +99,30 @@ namespace Snitch.Analysis
                         report.AddEmptyRow();
                     }
                 }
+            }
+
+            if (noPreRelease && resultsPreReleases.Count > 0)
+            {
+                report.AddEmptyRow();
+                report.AddRow($" [yellow]Projects with pre-release package references:[/]");
+                var packagesByProject = results.Select(s => new { ProjectName = s.Project, Packages = s.PreReleasePackages })
+                                               .OrderBy(o => o.ProjectName)
+                                               .ToList();
+
+                var table = new Table().BorderColor(Color.Grey).Expand();
+                table.AddColumns("[grey]Project[/]", "[grey]Package[/]", "[grey]Version[/]");
+                foreach (var projectGroup in packagesByProject)
+                {
+                    foreach (Package package in projectGroup.Packages)
+                    {
+                        table.AddRow(
+                            $"[green]{projectGroup.ProjectName}[/]",
+                            $"[yellow]{package.Name}[/]",
+                            $"{package.Version}");
+                    }
+                }
+
+                report.AddRow(table);
             }
 
             _console.WriteLine();
