@@ -24,39 +24,48 @@ Analyzing Qux...
 Analyzing Zap...
 Analyzing Quux...
 Analyzing Quuux...
+Analyzing Thud...
+Analyzing Thuuud...
 
-╭──────────────────────────────────────────────────────────────╮
-│  Packages that can be removed from Bar:                      │
-│ ┌─────────────────────┬────────────────────────────────────┐ │
-│ │ Package             │ Referenced by                      │ │
-│ ├─────────────────────┼────────────────────────────────────┤ │
-│ │ Autofac             │ Foo                                │ │
-│ └─────────────────────┴────────────────────────────────────┘ │
-│                                                              │
-│  Packages that can be removed from Baz:                      │
-│ ┌─────────────────────┬────────────────────────────────────┐ │
-│ │ Package             │ Referenced by                      │ │
-│ ├─────────────────────┼────────────────────────────────────┤ │
-│ │ Autofac             │ Foo                                │ │
-│ └─────────────────────┴────────────────────────────────────┘ │
-│                                                              │
-│  Packages that might be removed from Qux:                    │
-│ ┌───────────┬───────────┬──────────────────────────────────┐ │
-│ │ Package   │ Version   │ Reason                           │ │
-│ ├───────────┼───────────┼──────────────────────────────────┤ │
-│ │ Autofac   │ 4.9.3     │ Downgraded from 4.9.4 in Foo     │ │
-│ └───────────┴───────────┴──────────────────────────────────┘ │
-│                                                              │
-│  Packages that might be removed from Zap:                    │
-│ ┌─────────────────┬─────────┬──────────────────────────────┐ │
-│ │ Package         │ Version │ Reason                       │ │
-│ ├─────────────────┼─────────┼──────────────────────────────┤ │
-│ │ Newtonsoft.Json │ 12.0.3  │ Updated from 12.0.1 in Foo   │ │
-│ │ Autofac         │ 4.9.3   │ Downgraded from 4.9.4 in Foo │ │
-│ └─────────────────┴─────────┴──────────────────────────────┘ │
-╰──────────────────────────────────────────────────────────────╯
+╭─────────────────────────────────────────────────────────────────╮
+│  Packages that can be removed from Bar:                         │
+│ ┌──────────────────────┬──────────────────────────────────────┐ │
+│ │ Package              │ Referenced by                        │ │
+│ ├──────────────────────┼──────────────────────────────────────┤ │
+│ │ Autofac              │ Foo                                  │ │
+│ └──────────────────────┴──────────────────────────────────────┘ │
+│                                                                 │
+│  Packages that can be removed from Baz:                         │
+│ ┌──────────────────────┬──────────────────────────────────────┐ │
+│ │ Package              │ Referenced by                        │ │
+│ ├──────────────────────┼──────────────────────────────────────┤ │
+│ │ Autofac              │ Foo                                  │ │
+│ └──────────────────────┴──────────────────────────────────────┘ │
+│                                                                 │
+│  Packages that might be removed from Qux:                       │
+│ ┌───────────┬───────────┬─────────────────────────────────────┐ │
+│ │ Package   │ Version   │ Reason                              │ │
+│ ├───────────┼───────────┼─────────────────────────────────────┤ │
+│ │ Autofac   │ 4.9.3     │ Downgraded from 4.9.4 in Foo        │ │
+│ └───────────┴───────────┴─────────────────────────────────────┘ │
+│                                                                 │
+│  Packages that might be removed from Zap:                       │
+│ ┌──────────────────┬──────────┬───────────────────────────────┐ │
+│ │ Package          │ Version  │ Reason                        │ │
+│ ├──────────────────┼──────────┼───────────────────────────────┤ │
+│ │ Newtonsoft.Json  │ 12.0.3   │ Updated from 12.0.1 in Foo    │ │
+│ │ Autofac          │ 4.9.3    │ Downgraded from 4.9.4 in Foo  │ │
+│ └──────────────────┴──────────┴───────────────────────────────┘ │
+│                                                                 │
+│  Packages that might be removed from Thuuud:                    │
+│ ┌─────────────────┬──────────────┬────────────────────────────┐ │
+│ │ Package         │ Version      │ Reason                     │ │
+│ ├─────────────────┼──────────────┼────────────────────────────┤ │
+│ │ Newtonsoft.Json │ 13.0.2-beta2 │ Updated from 12.0.1 in Foo │ │
+│ └─────────────────┴──────────────┴────────────────────────────┘ │
+╰─────────────────────────────────────────────────────────────────╯
 ```
-<sup><a href='/src/Snitch.Tests/Expectations/Solution.Default.verified.txt#L1-L40' title='Snippet source file'>snippet source</a> | <a href='#snippet-Solution.Default.verified.txt' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/Snitch.Tests/Expectations/Solution.Default.verified.txt#L1-L49' title='Snippet source file'>snippet source</a> | <a href='#snippet-Solution.Default.verified.txt' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 ## Installation
@@ -101,6 +110,12 @@ and exclude the project OtherProject from analysis._
 
 ```
 > snitch MyProject.csproj --tfm net462 --skip OtherProject
+```
+
+_Examine a specific project or solution to make sure there are no pre-release package references._
+
+```
+> snitch MyProject.csproj --no-prerelease
 ```
 
 ## Building Snitch from source
