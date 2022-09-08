@@ -110,6 +110,70 @@ namespace Sntich.Tests
             await Verifier.Verify(output);
         }
 
+        [Fact]
+        [Expectation("Baz", "netstandard2.Strict.NoPreRelease")]
+        public async Task Should_Return_Non_Zero_Exit_Code_For_Baz_When_Running_With_Strict_And_NoPreRelease()
+        {
+            // Given
+            var fixture = new Fixture();
+            var project = Fixture.GetPath("Baz/Baz.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project, "--no-prerelease", "--strict");
+
+            // Then
+            exitCode.ShouldBe(-1);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
+        [Expectation("Thud", "netstandard2.Strict.NoPreRelease")]
+        public async Task Should_Return_Non_Zero_Exit_Code_For_Thud_When_Running_With_Strict_And_NoPreRelease()
+        {
+            // Given
+            var fixture = new Fixture();
+            var project = Fixture.GetPath("Thud/Thud.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project, "--no-prerelease", "--strict");
+
+            // Then
+            exitCode.ShouldBe(-1);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
+        [Expectation("Thuuud", "netstandard2.Strict.NoPreRelease")]
+        public async Task Should_Return_Non_Zero_Exit_Code_For_Thuuud_When_Running_With_Strict_And_NoPreRelease()
+        {
+            // Given
+            var fixture = new Fixture();
+            var project = Fixture.GetPath("Thuuud/Thuuud.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project, "--no-prerelease", "--strict");
+
+            // Then
+            exitCode.ShouldBe(-1);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
+        [Expectation("Thuuud", "netstandard2.NoPreRelease")]
+        public async Task Should_Return_Zero_Exit_Code_For_Thuuud_When_Running_With_NoPreRelease()
+        {
+            // Given
+            var fixture = new Fixture();
+            var project = Fixture.GetPath("Thuuud/Thuuud.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project, "--no-prerelease");
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
         public sealed class Fixture
         {
             public static string GetPath(string path)
