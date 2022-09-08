@@ -12,7 +12,6 @@ namespace Snitch.Analysis
         public string Project => _project.Name;
         public IReadOnlyList<PackageToRemove> CanBeRemoved { get; }
         public IReadOnlyList<PackageToRemove> MightBeRemoved { get; }
-
         public IReadOnlyList<Package> PreReleasePackages { get; }
 
         public bool NoPackagesToRemove => CanBeRemoved.Count == 0 && MightBeRemoved.Count == 0;
