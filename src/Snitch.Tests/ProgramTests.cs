@@ -111,6 +111,22 @@ namespace Sntich.Tests
         }
 
         [Fact]
+        [Expectation("Baz", "Skip_Bar_NoPreRelease")]
+        public async Task Should_Return_Expected_Result_For_Baz_When_Skipping_Project_And_NoReleases()
+        {
+            // Given
+            var fixture = new Fixture();
+            var project = Fixture.GetPath("Baz/Baz.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project, "--skip", "Bar", "--no-prerelease");
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
         [Expectation("Baz", "netstandard2.Strict.NoPreRelease")]
         public async Task Should_Return_Non_Zero_Exit_Code_For_Baz_When_Running_With_Strict_And_NoPreRelease()
         {
