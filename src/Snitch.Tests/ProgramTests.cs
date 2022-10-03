@@ -115,7 +115,7 @@ namespace Sntich.Tests
             public static string GetPath(string path)
             {
                 var workingDirectory = Environment.CurrentDirectory;
-                var solutionDirectory = Path.GetFullPath(Path.Combine(workingDirectory, "../../../../Snitch.Tests.Fixtures"));
+                var solutionDirectory = Path.GetFullPath(Path.Combine(workingDirectory, "../../../../../test/Snitch.Tests.Fixtures"));
                 return Path.GetFullPath(Path.Combine(solutionDirectory, path));
             }
 
