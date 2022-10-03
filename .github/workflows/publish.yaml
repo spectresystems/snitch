@@ -1,6 +1,12 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-name: Continuous Integration
-on: pull_request
+name: Publish
+
+on:
+  push:
+    tags:
+      - '*'
+    branches:
+      - main
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
@@ -9,11 +15,11 @@ env:
 jobs:
 
   ###################################################
-  # BUILD
+  # PUBLISH
   ###################################################
 
-  build:
-    name: Build
+  publish:
+    name: Publish
     if: "!contains(github.event.head_commit.message, 'skip-ci')"
     runs-on: ubuntu-latest
     steps:
@@ -25,8 +31,9 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v1
 
-      - name: Build
+      - name: Publish
         shell: bash
         run: |
           dotnet tool restore
-          dotnet cake
+          dotnet cake --target="publish" \
+            --nuget-key="${{secrets.NUGET_API_KEY}}"

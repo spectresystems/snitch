@@ -1,13 +1,13 @@
-using Shouldly;
-using Snitch;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Shouldly;
+using Snitch;
 using Spectre.Console.Cli;
 using Spectre.Console.Testing;
 using VerifyTests;
-using Xunit;
 using VerifyXunit;
+using Xunit;
 
 namespace Sntich.Tests
 {
@@ -119,7 +119,7 @@ namespace Sntich.Tests
                 return Path.GetFullPath(Path.Combine(solutionDirectory, path));
             }
 
-            public static async Task<(int exitCode, string output)> Run(params string[] args)
+            public static async Task<(int ExitCode, string Output)> Run(params string[] args)
             {
                 var console = new TestConsole { EmitAnsiSequences = false };
                 var exitCode = await Program.Run(args, c => c.ConfigureConsole(console));

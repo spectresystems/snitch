@@ -1,8 +1,8 @@
-var semanticVersion = Argument<string>("packageversion", "1.0.0");
-var version = semanticVersion.Split(new[] { '-' }).FirstOrDefault() ?? semanticVersion;
+var target = Argument("target", "Default");
+var configuration = Argument("configuration", "Release");
 
-Information("Version: {0}", semanticVersion);
-Information("Legacy version: {0}", version);
+////////////////////////////////////////////////////////////////
+// Tasks
 
 Task("Clean")
     .Does(() =>
@@ -16,12 +16,9 @@ Task("Build")
 {
     DotNetBuild("./src/Snitch.sln", new DotNetBuildSettings
     {
-        Configuration = "Release",
+        Configuration = configuration,
         MSBuildSettings = new DotNetMSBuildSettings()
-            .TreatAllWarningsAs(MSBuildTreatAllWarningsAs.Error)
-            .WithProperty("Version", version)
-            .WithProperty("AssemblyVersion", version)
-            .WithProperty("FileVersion", version)
+            .TreatAllWarningsAs(MSBuildTreatAllWarningsAs.Error),
     });
 });
 
@@ -31,7 +28,7 @@ Task("Run-Tests")
 {
     DotNetTest("./src/Snitch.Tests/Snitch.Tests.csproj", new DotNetTestSettings
     {
-        Configuration = "Release"
+        Configuration = configuration
     });
 });
 
@@ -41,13 +38,44 @@ Task("Pack")
 {
     DotNetPack("./src/Snitch.sln", new DotNetPackSettings
     {
-        Configuration = "Release",
+        Configuration = configuration,
         NoRestore = true,
         NoBuild = true,
         OutputDirectory = "./.artifacts",
         MSBuildSettings = new DotNetMSBuildSettings()
-            .WithProperty("PackageVersion", semanticVersion)
+            .TreatAllWarningsAs(MSBuildTreatAllWarningsAs.Error)
+            .WithProperty("SymbolPackageFormat", "snupkg")
     });
 });
 
-RunTarget("Pack")
+Task("Publish")
+    .WithCriteria(ctx => BuildSystem.IsRunningOnGitHubActions, "Not running on GitHub Actions")
+    .IsDependentOn("Pack")
+    .Does(context => 
+{
+    var apiKey = Argument<string>("nuget-key", null);
+    if(string.IsNullOrWhiteSpace(apiKey)) {
+        throw new CakeException("No NuGet API key was provided.");
+    }
+
+    foreach(var file in context.GetFiles("./.artifacts/*.nupkg")) 
+    {
+        Information("Publishing {0}...", file.GetFilename().FullPath);
+        DotNetNuGetPush(file.FullPath, new DotNetNuGetPushSettings
+        {
+            Source = "https://api.nuget.org/v3/index.json",
+            ApiKey = apiKey,
+        });
+    }
+});
+
+////////////////////////////////////////////////////////////////
+// Targets
+
+Task("Default")
+    .IsDependentOn("Pack");
+
+////////////////////////////////////////////////////////////////
+// Execution
+
+RunTarget(target)

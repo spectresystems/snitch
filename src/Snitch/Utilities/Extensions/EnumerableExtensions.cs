@@ -5,7 +5,7 @@ namespace Snitch
 {
     public static class EnumerableExtensions
     {
-        public static IEnumerable<(int index, bool first, bool last, T item)> Enumerate<T>(this IEnumerable<T> source)
+        public static IEnumerable<(int Index, bool First, bool Last, T Item)> Enumerate<T>(this IEnumerable<T> source)
         {
             if (source is null)
             {
@@ -15,7 +15,7 @@ namespace Snitch
             return Enumerate(source.GetEnumerator());
         }
 
-        public static IEnumerable<(int index, bool first, bool last, T item)> Enumerate<T>(this IEnumerator<T> source)
+        public static IEnumerable<(int Index, bool First, bool Last, T Item)> Enumerate<T>(this IEnumerator<T> source)
         {
             if (source is null)
             {

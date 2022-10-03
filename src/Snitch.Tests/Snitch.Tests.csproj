@@ -27,4 +27,8 @@
     <ProjectReference Include="..\Snitch\Snitch.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AdditionalFiles Include="..\stylecop.json" Link="Properties/stylecop.json" />
+  </ItemGroup>
+
 </Project>
