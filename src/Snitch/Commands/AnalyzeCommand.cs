@@ -44,6 +44,10 @@ namespace Snitch.Commands
             [CommandOption("--no-prerelease")]
             [Description("Verifies that all package references are not pre-releases.")]
             public bool NoPreRelease { get; set; }
+
+            [CommandOption("-o|--out <filename>")]
+            [Description("The ouput file to write.")]
+            public string? OutputFileName { get; set; }
         }
 
         public AnalyzeCommand(IAnsiConsole console)
@@ -79,6 +83,16 @@ namespace Snitch.Commands
 
                 foreach (var projectToAnalyze in projectsToAnalyze)
                 {
+                    if (!projectToAnalyze.EndsWith("csproj", StringComparison.OrdinalIgnoreCase)
+                        && !projectToAnalyze.EndsWith("fsproj", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var projectName = Path.GetFileNameWithoutExtension(projectToAnalyze);
+                        _console.MarkupLine($"Skipping Non .NET Project [aqua]{projectName}[/]");
+                        _console.WriteLine();
+
+                        continue;
+                    }
+
                     // Perform a design time build of the project.
                     var buildResult = _builder.Build(
                         projectToAnalyze,
@@ -106,6 +120,12 @@ namespace Snitch.Commands
 
                 // Write the report to the console
                 _reporter.WriteToConsole(analyzerResults, settings.NoPreRelease);
+
+                if (settings.OutputFileName != null)
+                {
+                    // Write the report to a file.
+                    _reporter.WriteToFile(analyzerResults, settings.OutputFileName);
+                }
 
                 // Return the correct exit code.
                 return GetExitCode(settings, analyzerResults);

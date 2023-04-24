@@ -10,6 +10,7 @@ namespace Snitch.Analysis
         private readonly List<PackageToRemove> _packages;
 
         public string Project => _project.Name;
+        public string ProjectPath => _project.Path;
         public IReadOnlyList<PackageToRemove> CanBeRemoved { get; }
         public IReadOnlyList<PackageToRemove> MightBeRemoved { get; }
         public IReadOnlyList<Package> PreReleasePackages { get; }
