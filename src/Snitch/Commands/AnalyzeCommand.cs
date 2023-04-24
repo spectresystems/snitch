@@ -18,6 +18,7 @@ namespace Snitch.Commands
         private readonly ProjectBuilder _builder;
         private readonly ProjectAnalyzer _analyzer;
         private readonly ProjectReporter _reporter;
+        private readonly ProjectFileReporter _fileReporter;
 
         public sealed class Settings : CommandSettings
         {
@@ -46,7 +47,7 @@ namespace Snitch.Commands
             public bool NoPreRelease { get; set; }
 
             [CommandOption("-o|--out <filename>")]
-            [Description("The ouput file to write.")]
+            [Description("The name of the json output file to write.")]
             public string? OutputFileName { get; set; }
         }
 
@@ -56,6 +57,7 @@ namespace Snitch.Commands
             _builder = new ProjectBuilder(console);
             _analyzer = new ProjectAnalyzer();
             _reporter = new ProjectReporter(console);
+            _fileReporter = new ProjectFileReporter();
         }
 
         public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
@@ -124,7 +126,7 @@ namespace Snitch.Commands
                 if (settings.OutputFileName != null)
                 {
                     // Write the report to a file.
-                    _reporter.WriteToFile(analyzerResults, settings.OutputFileName);
+                    _fileReporter.WriteToFile(analyzerResults, settings.OutputFileName);
                 }
 
                 // Return the correct exit code.

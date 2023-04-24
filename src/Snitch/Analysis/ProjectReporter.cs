@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
-using System.Text.Json;
 using Spectre.Console;
 
 namespace Snitch.Analysis
@@ -134,25 +132,6 @@ namespace Snitch.Analysis
                 new Panel(report)
                     .RoundedBorder()
                     .BorderColor(Color.Grey));
-        }
-
-        internal void WriteToFile(List<ProjectAnalyzerResult> analyzerResults, string outputFileName)
-        {
-            var removeResult =
-                analyzerResults
-                    .Where(x => x.CanBeRemoved.Count > 0)
-                    .Select(x => new
-                    {
-                        x.Project,
-                        x.ProjectPath,
-                        CanBeRemoved = x.CanBeRemoved.Select(y => y.Package.Name),
-                    });
-
-            using FileStream createStream = File.Create(outputFileName);
-            JsonSerializer.Serialize(createStream, removeResult, new JsonSerializerOptions()
-            {
-                WriteIndented = true
-            });
         }
     }
 }
