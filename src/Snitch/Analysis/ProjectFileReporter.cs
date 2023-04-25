@@ -30,7 +30,9 @@ namespace Snitch.Analysis
                         MightBeRemoved = x.MightBeRemoved.Select(y => new
                         {
                              PackageName = y.Package.Name,
+                             PackageVersion = y.Package.Version,
                              ReferencedBy = y.Original.Project.Name,
+                             ReferencePackageVersion = y.Original.Package.Version,
                         }),
                     });
 

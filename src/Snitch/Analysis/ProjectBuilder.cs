@@ -153,18 +153,26 @@ namespace Snitch.Analysis
                 ? $"{prefix}Analyzing [aqua]{project.Name}[/]..."
                 : $"{prefix}Analyzing [aqua]{project.Name}[/] [grey]({tfm})[/]...";
 
-            _console.MarkupLine(status);
-
-            var projectAnalyzer = manager.GetProject(project.Path);
-            var results = (IEnumerable<IAnalyzerResult>)projectAnalyzer.Build();
-
-            if (!string.IsNullOrWhiteSpace(tfm))
+            try
             {
-                var closest = results.GetNearestFrameworkMoniker(tfm);
-                results = results.Where(p => p.TargetFramework.Equals(closest, StringComparison.OrdinalIgnoreCase));
-            }
+                _console.MarkupLine(status);
 
-            return results.FirstOrDefault();
+                var projectAnalyzer = manager.GetProject(project.Path);
+                var results = (IEnumerable<IAnalyzerResult>)projectAnalyzer.Build();
+
+                if (!string.IsNullOrWhiteSpace(tfm))
+                {
+                    var closest = results.GetNearestFrameworkMoniker(tfm);
+                    results = results.Where(p => p.TargetFramework.Equals(closest, StringComparison.OrdinalIgnoreCase));
+                }
+
+                return results.FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                _console.MarkupLine($"{prefix}  [red]ERROR:[/] {ex.Message}");
+                return null;
+            }
         }
     }
 }

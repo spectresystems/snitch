@@ -95,29 +95,40 @@ namespace Snitch.Commands
                         continue;
                     }
 
-                    // Perform a design time build of the project.
-                    var buildResult = _builder.Build(
-                        projectToAnalyze,
-                        targetFramework,
-                        settings.Skip,
-                        projectCache);
-
-                    // Update the cache of built projects.
-                    projectCache.Add(buildResult.Project);
-                    foreach (var item in buildResult.Dependencies)
+                    try
                     {
-                        projectCache.Add(item);
-                    }
+                        // Perform a design time build of the project.
+                        var buildResult = _builder.Build(
+                            projectToAnalyze,
+                            targetFramework,
+                            settings.Skip,
+                            projectCache);
 
-                    // Analyze the project.
-                    var analyzeResult = _analyzer.Analyze(buildResult.Project);
-                    if (settings.Exclude?.Length > 0)
+                        // Update the cache of built projects.
+                        projectCache.Add(buildResult.Project);
+                        foreach (var item in buildResult.Dependencies)
+                        {
+                            projectCache.Add(item);
+                        }
+
+                        // Analyze the project.
+                        var analyzeResult = _analyzer.Analyze(buildResult.Project);
+                        if (settings.Exclude?.Length > 0)
+                        {
+                            // Filter packages that should be excluded.
+                            analyzeResult = analyzeResult.Filter(settings.Exclude);
+                        }
+
+                        analyzerResults.Add(analyzeResult);
+                    }
+                    catch (Exception ex)
                     {
-                        // Filter packages that should be excluded.
-                        analyzeResult = analyzeResult.Filter(settings.Exclude);
+                        _console.MarkupLine($"  [red]ERROR:[/] {ex.Message}");
+                        if (settings.Strict)
+                        {
+                            return -1;
+                        }
                     }
-
-                    analyzerResults.Add(analyzeResult);
                 }
 
                 // Write the report to the console
