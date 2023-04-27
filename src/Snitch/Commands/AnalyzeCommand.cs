@@ -57,7 +57,7 @@ namespace Snitch.Commands
             _builder = new ProjectBuilder(console);
             _analyzer = new ProjectAnalyzer();
             _reporter = new ProjectReporter(console);
-            _fileReporter = new ProjectFileReporter();
+            _fileReporter = new ProjectFileReporter(console);
         }
 
         public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
@@ -137,7 +137,7 @@ namespace Snitch.Commands
                 if (settings.OutputFileName != null)
                 {
                     // Write the report to a file.
-                    _fileReporter.WriteToFile(analyzerResults, settings.OutputFileName);
+                    _fileReporter.WriteToFile(analyzerResults, settings.OutputFileName, settings.NoPreRelease);
                 }
 
                 // Return the correct exit code.

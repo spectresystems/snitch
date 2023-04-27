@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using VerifyTests;
 
-namespace Sntich.Tests
+namespace Snitch.Tests
 {
     public static class VerifyConfiguration
     {

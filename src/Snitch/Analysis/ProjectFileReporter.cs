@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -10,13 +9,16 @@ namespace Snitch.Analysis
 {
     internal class ProjectFileReporter
     {
-        public ProjectFileReporter()
+        private readonly IAnsiConsole _console;
+
+        public ProjectFileReporter(IAnsiConsole console)
         {
+            _console = console ?? throw new ArgumentNullException(nameof(console));
         }
 
-        internal void WriteToFile(List<ProjectAnalyzerResult> analyzerResults, string outputFileName)
+        internal void WriteToFile(List<ProjectAnalyzerResult> analyzerResults, string outputFileName, bool noPreRelease)
         {
-            var removeResult =
+            var results =
                 analyzerResults
                     .Where(x => x.CanBeRemoved.Count > 0)
                     .Select(x => new
@@ -34,13 +36,22 @@ namespace Snitch.Analysis
                              ReferencedBy = y.Original.Project.Name,
                              ReferencePackageVersion = y.Original.Package.Version,
                         }),
+                        PreRelease = noPreRelease ? null : x.PreReleasePackages.Select(y => new
+                        {
+                            PackageName = y.Name,
+                            Version = y.Version,
+                        }),
                     });
 
             using FileStream createStream = File.Create(outputFileName);
-            JsonSerializer.Serialize(createStream, removeResult, new JsonSerializerOptions()
+            JsonSerializer.Serialize(createStream, results, new JsonSerializerOptions()
             {
                 WriteIndented = true,
             });
+
+            _console.WriteLine();
+            _console.MarkupLine($"[green]Results written to {outputFileName}![/]");
+            _console.WriteLine();
         }
     }
 }
