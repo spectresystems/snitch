@@ -29,6 +29,22 @@ namespace Snitch.Tests
         }
 
         [Fact]
+        [Expectation("Baz", "Json")]
+        public async Task Should_Return_Expected_Json_For_Baz_Not_Specifying_Framework()
+        {
+            // Given
+            var project = Fixture.GetPath("Baz/Baz.csproj");
+
+            // When
+            using var tempFileScope = new TempFileScope();
+            var (exitCode, _) = await Fixture.Run(project, "--out", tempFileScope.FileName);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.VerifyFile(tempFileScope.FileName);
+        }
+
+        [Fact]
         [Expectation("Solution", "Default")]
         public async Task Should_Return_Expected_Result_For_Solution_Not_Specifying_Framework()
         {
@@ -41,6 +57,22 @@ namespace Snitch.Tests
             // Then
             exitCode.ShouldBe(0);
             await Verifier.Verify(output);
+        }
+
+        [Fact]
+        [Expectation("Solution", "Json")]
+        public async Task Should_Return_Expected_Json_For_Solution_Not_Specifying_Framework()
+        {
+            // Given
+            var solution = Fixture.GetPath("Snitch.Tests.Fixtures.sln");
+
+            // When
+            using var tempFileScope = new TempFileScope();
+            var (exitCode, _) = await Fixture.Run(solution, "--out", tempFileScope.FileName);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.VerifyFile(tempFileScope.FileName);
         }
 
         [Fact]
@@ -237,6 +269,24 @@ namespace Snitch.Tests
                 var console = new TestConsole { EmitAnsiSequences = false };
                 var exitCode = await Program.Run(args, c => c.ConfigureConsole(console));
                 return (exitCode, console.Output.Trim());
+            }
+        }
+
+        private sealed class TempFileScope : IDisposable
+        {
+            public TempFileScope()
+            {
+                this.FileName = Path.GetTempFileName() + ".json";
+            }
+
+            public string FileName { get; }
+
+            public void Dispose()
+            {
+                if (File.Exists(this.FileName))
+                {
+                    File.Delete(this.FileName);
+                }
             }
         }
     }
