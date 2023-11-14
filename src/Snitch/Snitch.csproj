@@ -22,12 +22,12 @@
 
   <!-- Packages -->
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="6.3.0" />
-    <PackageReference Include="Buildalyzer" Version="3.2.6" />
+    <PackageReference Include="Autofac" Version="7.1.0" />
+    <PackageReference Include="Buildalyzer" Version="5.0.1" />
     <PackageReference Include="NuGet.Frameworks" Version="6.0.0" />
     <PackageReference Include="NuGet.ProjectModel" Version="6.0.0" />
     <PackageReference Include="NuGet.Versioning" Version="6.0.0" />
-    <PackageReference Include="Spectre.Console" Version="0.43.0" />
+    <PackageReference Include="Spectre.Console.Cli" Version="0.47.0" />
   </ItemGroup>
 
   <!-- Static analysis -->
