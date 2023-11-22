@@ -1,0 +1,14 @@
+﻿[
+  {
+    "Project": "Baz",
+    "CanBeRemoved": [
+      {
+        "PackageName": "Autofac",
+        "PackageVersion": "4.9.4",
+        "ReferencedBy": "Foo"
+      }
+    ],
+    "MightBeRemoved": [],
+    "PreRelease": []
+  }
+]

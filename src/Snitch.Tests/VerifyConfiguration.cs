@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 using VerifyTests;
 using VerifyXunit;
 
-namespace Sntich.Tests
+namespace Snitch.Tests
 {
     public static class VerifyConfiguration
     {

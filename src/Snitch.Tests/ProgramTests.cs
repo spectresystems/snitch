@@ -1,5 +1,4 @@
 using Shouldly;
-using Snitch;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -9,7 +8,7 @@ using VerifyTests;
 using Xunit;
 using VerifyXunit;
 
-namespace Sntich.Tests
+namespace Snitch.Tests
 {
     [UsesVerify]
     public class ProgramTests
@@ -19,7 +18,6 @@ namespace Sntich.Tests
         public async Task Should_Return_Expected_Result_For_Baz_Not_Specifying_Framework()
         {
             // Given
-            var fixture = new Fixture();
             var project = Fixture.GetPath("Baz/Baz.csproj");
 
             // When
@@ -31,11 +29,26 @@ namespace Sntich.Tests
         }
 
         [Fact]
+        [Expectation("Baz", "Json")]
+        public async Task Should_Return_Expected_Json_For_Baz_Not_Specifying_Framework()
+        {
+            // Given
+            var project = Fixture.GetPath("Baz/Baz.csproj");
+
+            // When
+            using var tempFileScope = new TempFileScope();
+            var (exitCode, _) = await Fixture.Run(project, "--out", tempFileScope.FileName);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.VerifyFile(tempFileScope.FileName);
+        }
+
+        [Fact]
         [Expectation("Solution", "Default")]
         public async Task Should_Return_Expected_Result_For_Solution_Not_Specifying_Framework()
         {
             // Given
-            var fixture = new Fixture();
             var solution = Fixture.GetPath("Snitch.Tests.Fixtures.sln");
 
             // When
@@ -47,11 +60,26 @@ namespace Sntich.Tests
         }
 
         [Fact]
+        [Expectation("Solution", "Json")]
+        public async Task Should_Return_Expected_Json_For_Solution_Not_Specifying_Framework()
+        {
+            // Given
+            var solution = Fixture.GetPath("Snitch.Tests.Fixtures.sln");
+
+            // When
+            using var tempFileScope = new TempFileScope();
+            var (exitCode, _) = await Fixture.Run(solution, "--out", tempFileScope.FileName);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.VerifyFile(tempFileScope.FileName);
+        }
+
+        [Fact]
         [Expectation("Baz", "netstandard2.0")]
         public async Task Should_Return_Expected_Result_For_Baz_Specifying_Framework()
         {
             // Given
-            var fixture = new Fixture();
             var project = Fixture.GetPath("Baz/Baz.csproj");
 
             // When
@@ -67,7 +95,6 @@ namespace Sntich.Tests
         public async Task Should_Return_Non_Zero_Exit_Code_For_Baz_When_Running_With_Strict()
         {
             // Given
-            var fixture = new Fixture();
             var project = Fixture.GetPath("Baz/Baz.csproj");
 
             // When
@@ -83,7 +110,6 @@ namespace Sntich.Tests
         public async Task Should_Return_Expected_Result_For_Baz_When_Excluding_Library()
         {
             // Given
-            var fixture = new Fixture();
             var project = Fixture.GetPath("Baz/Baz.csproj");
 
             // When
@@ -99,7 +125,6 @@ namespace Sntich.Tests
         public async Task Should_Return_Expected_Result_For_Baz_When_Skipping_Project()
         {
             // Given
-            var fixture = new Fixture();
             var project = Fixture.GetPath("Baz/Baz.csproj");
 
             // When
@@ -115,7 +140,6 @@ namespace Sntich.Tests
         public async Task Should_Return_Expected_Result_For_Baz_When_Skipping_Project_And_NoReleases()
         {
             // Given
-            var fixture = new Fixture();
             var project = Fixture.GetPath("Baz/Baz.csproj");
 
             // When
@@ -131,7 +155,6 @@ namespace Sntich.Tests
         public async Task Should_Return_Non_Zero_Exit_Code_For_Baz_When_Running_With_Strict_And_NoPreRelease()
         {
             // Given
-            var fixture = new Fixture();
             var project = Fixture.GetPath("Baz/Baz.csproj");
 
             // When
@@ -147,7 +170,6 @@ namespace Sntich.Tests
         public async Task Should_Return_Non_Zero_Exit_Code_For_Thud_When_Running_With_Strict_And_NoPreRelease()
         {
             // Given
-            var fixture = new Fixture();
             var project = Fixture.GetPath("Thud/Thud.csproj");
 
             // When
@@ -163,7 +185,6 @@ namespace Sntich.Tests
         public async Task Should_Return_Non_Zero_Exit_Code_For_Thuuud_When_Running_With_Strict_And_NoPreRelease()
         {
             // Given
-            var fixture = new Fixture();
             var project = Fixture.GetPath("Thuuud/Thuuud.csproj");
 
             // When
@@ -179,7 +200,6 @@ namespace Sntich.Tests
         public async Task Should_Return_Zero_Exit_Code_For_Thuuud_When_Running_With_NoPreRelease()
         {
             // Given
-            var fixture = new Fixture();
             var project = Fixture.GetPath("Thuuud/Thuuud.csproj");
 
             // When
@@ -190,7 +210,52 @@ namespace Sntich.Tests
             await Verifier.Verify(output);
         }
 
-        public sealed class Fixture
+        [Fact]
+        [Expectation("FooBar", "Default")]
+        public async Task Should_Print_Error_For_FooBar()
+        {
+            // Given
+            var project = Fixture.GetPath("FooBar/FooBar.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
+        [Expectation("FooBar", "Strict")]
+        public async Task Should_Return_NonZero_Exit_Code_For_FooBar_When_Running_With_Strict()
+        {
+            // Given
+            var project = Fixture.GetPath("FooBar/FooBar.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project, "--strict");
+
+            // Then
+            exitCode.ShouldBe(-1);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
+        [Expectation("FSharp", "Default")]
+        public async Task Should_Return_Expected_Result_For_FSharp_Not_Specifying_Framework()
+        {
+            // Given
+            var project = Fixture.GetPath("FSharp/FSharp.fsproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
+        private static class Fixture
         {
             public static string GetPath(string path)
             {
@@ -207,20 +272,22 @@ namespace Sntich.Tests
             }
         }
 
-        [Fact]
-        [Expectation("FSharp", "Default")]
-        public async Task Should_Return_Expected_Result_For_FSharp_Not_Specifying_Framework()
+        private sealed class TempFileScope : IDisposable
         {
-            // Given
-            var fixture = new Fixture();
-            var project = Fixture.GetPath("FSharp/FSharp.fsproj");
+            public TempFileScope()
+            {
+                this.FileName = Path.GetTempFileName() + ".json";
+            }
 
-            // When
-            var (exitCode, output) = await Fixture.Run(project);
+            public string FileName { get; }
 
-            // Then
-            exitCode.ShouldBe(0);
-            await Verifier.Verify(output);
+            public void Dispose()
+            {
+                if (File.Exists(this.FileName))
+                {
+                    File.Delete(this.FileName);
+                }
+            }
         }
     }
 }

@@ -104,7 +104,7 @@ namespace Snitch.Analysis
             if (noPreRelease && resultsWithPreReleases.Count > 0)
             {
                 report.AddEmptyRow();
-                report.AddRow($" [yellow]Projects with pre-release package references:[/]");
+                report.AddRow(" [yellow]Projects with pre-release package references:[/]");
                 var packagesByProject = resultsWithPreReleases.SelectMany(x => x.PreReleasePackages, (project, package) => new
                                                               {
                                                                   Project = project.Project,
