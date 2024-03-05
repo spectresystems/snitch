@@ -123,7 +123,7 @@ namespace Snitch.Analysis
                     }
                 }
 
-                if (!projectReferencePath.EndsWith("csproj", StringComparison.OrdinalIgnoreCase) && !projectReferencePath.EndsWith("fsproj", StringComparison.OrdinalIgnoreCase))
+                if (!projectReferencePath.EndsWith("vbproj", StringComparison.OrdinalIgnoreCase) && !projectReferencePath.EndsWith("csproj", StringComparison.OrdinalIgnoreCase) && !projectReferencePath.EndsWith("fsproj", StringComparison.OrdinalIgnoreCase))
                 {
                     _console.MarkupLine(string.IsNullOrWhiteSpace(tfm)
                         ? $"Skipping Non .NET Project [aqua]{project.Name}[/]"
