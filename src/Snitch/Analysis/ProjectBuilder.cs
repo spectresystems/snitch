@@ -101,12 +101,9 @@ namespace Snitch.Analysis
             // Get the package references.
             foreach (var packageReference in result.PackageReferences)
             {
-                if (packageReference.Value.TryGetValue("Version", out var version))
-                {
-                    var privateAssets = packageReference.Value.GetValueOrDefault("PrivateAssets");
-
-                    project.Packages.Add(new Package(packageReference.Key, version, privateAssets));
-                }
+                var version = packageReference.Value.GetValueOrDefault("Version");
+                var privateAssets = packageReference.Value.GetValueOrDefault("PrivateAssets");
+                project.Packages.Add(new Package(packageReference.Key, version, privateAssets));
             }
 
             // Analyze all project references.
