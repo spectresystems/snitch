@@ -89,3 +89,19 @@ Thumbs.db
 
 # Rider
 .idea/
+
+# Verify framework test artifacts
+*.received.txt
+*.received.*
+
+# .NET test artifacts
+*.trx
+*.coverage
+*.coveragexml
+
+# Temporary files
+test-*
+temp-*
+
+# Test results directory
+TestResults/

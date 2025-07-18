@@ -222,5 +222,69 @@ namespace Sntich.Tests
             exitCode.ShouldBe(0);
             await Verifier.Verify(output);
         }
+
+        [Fact]
+        [Expectation("CentralPackages", "Default")]
+        public async Task Should_Return_Expected_Result_For_CentralPackages()
+        {
+            // Given
+            var fixture = new Fixture();
+            var project = Fixture.GetPath("CentralPackages/CentralPackages.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
+        [Expectation("CentralPackagesGlobal", "Default")]
+        public async Task Should_Return_Expected_Result_For_CentralPackages_With_GlobalPackageReference()
+        {
+            // Given
+            var fixture = new Fixture();
+            var project = Fixture.GetPath("CentralPackagesGlobal/CentralPackagesGlobal.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
+        [Expectation("CentralPackagesDisabled", "Default")]
+        public async Task Should_Return_Expected_Result_For_CentralPackages_When_Disabled()
+        {
+            // Given
+            var fixture = new Fixture();
+            var project = Fixture.GetPath("CentralPackagesDisabled/CentralPackagesDisabled.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
+        [Expectation("CentralPackagesBuildProps", "Default")]
+        public async Task Should_Return_Expected_Result_For_CentralPackages_With_BuildProps()
+        {
+            // Given
+            var fixture = new Fixture();
+            var project = Fixture.GetPath("CentralPackagesBuildProps/CentralPackagesBuildProps.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
     }
 }

@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Autofac" Version="6.4.0" />
+    <PackageVersion Include="Spectre.Console" Version="0.44.0" />
+  </ItemGroup>
+</Project>

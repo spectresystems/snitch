@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Autofac" Version="6.4.0" />
+    <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.1.118" />
+  </ItemGroup>
+</Project>

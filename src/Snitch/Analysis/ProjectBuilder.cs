@@ -98,13 +98,17 @@ namespace Snitch.Analysis
             // Add the project to the built list.
             built.Add(Path.GetFileName(path), project);
 
+            // Initialize Central Package Manager
+            var centralPackageManager = new CentralPackageManager(path);
+
             // Get the package references.
             foreach (var packageReference in result.PackageReferences)
             {
-                if (packageReference.Value.TryGetValue("Version", out var version))
-                {
-                    var privateAssets = packageReference.Value.GetValueOrDefault("PrivateAssets");
+                var privateAssets = packageReference.Value.GetValueOrDefault("PrivateAssets");
+                var version = ResolvePackageVersion(packageReference, centralPackageManager);
 
+                if (!string.IsNullOrEmpty(version))
+                {
                     project.Packages.Add(new Package(packageReference.Key, version, privateAssets));
                 }
             }
@@ -165,6 +169,36 @@ namespace Snitch.Analysis
             }
 
             return results.FirstOrDefault();
+        }
+
+        private static string? ResolvePackageVersion(
+            KeyValuePair<string, IReadOnlyDictionary<string, string>> packageReference,
+            CentralPackageManager centralPackageManager)
+        {
+            // Try to get version from PackageReference first
+            if (packageReference.Value.TryGetValue("Version", out var version) && !string.IsNullOrEmpty(version))
+            {
+                return version;
+            }
+
+            // If no version and central management is enabled, try to get from Directory.Packages.props
+            if (centralPackageManager.IsCentralManagementEnabled)
+            {
+                var centralVersion = centralPackageManager.GetPackageVersion(packageReference.Key);
+                if (!string.IsNullOrEmpty(centralVersion))
+                {
+                    return centralVersion;
+                }
+
+                // Check if this is a GlobalPackageReference (these might be processed as PackageReference without version)
+                var globalVersion = centralPackageManager.GetGlobalPackageVersion(packageReference.Key);
+                if (!string.IsNullOrEmpty(globalVersion))
+                {
+                    return globalVersion;
+                }
+            }
+
+            return null;
         }
     }
 }
