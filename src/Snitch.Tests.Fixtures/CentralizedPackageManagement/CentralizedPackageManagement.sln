@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.36105.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asdf", "Asdf\Asdf.csproj", "{0026E591-BDA2-59CD-C237-1513DA9668F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qwerty", "Qwerty\Qwerty.csproj", "{D9EE6D9A-329C-4B70-831C-EBDB4498C490}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0026E591-BDA2-59CD-C237-1513DA9668F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0026E591-BDA2-59CD-C237-1513DA9668F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0026E591-BDA2-59CD-C237-1513DA9668F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0026E591-BDA2-59CD-C237-1513DA9668F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9EE6D9A-329C-4B70-831C-EBDB4498C490}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9EE6D9A-329C-4B70-831C-EBDB4498C490}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9EE6D9A-329C-4B70-831C-EBDB4498C490}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9EE6D9A-329C-4B70-831C-EBDB4498C490}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {95C9EDD6-8E73-4BC8-9DD0-D25CE6E91111}
+	EndGlobalSection
+EndGlobal

@@ -1,13 +1,13 @@
-using Shouldly;
-using Snitch;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Shouldly;
+using Snitch;
 using Spectre.Console.Cli;
 using Spectre.Console.Testing;
 using VerifyTests;
-using Xunit;
 using VerifyXunit;
+using Xunit;
 
 namespace Sntich.Tests
 {
@@ -184,6 +184,22 @@ namespace Sntich.Tests
 
             // When
             var (exitCode, output) = await Fixture.Run(project, "--no-prerelease");
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
+        [Expectation("Asdf", "Default")]
+        public async Task Should_Return_Expected_Result_For_Centralized_Package_Management()
+        {
+            // Given
+            var fixture = new Fixture();
+            var project = Fixture.GetPath("CentralizedPackageManagement/CentralizedPackageManagement.sln");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project);
 
             // Then
             exitCode.ShouldBe(0);
