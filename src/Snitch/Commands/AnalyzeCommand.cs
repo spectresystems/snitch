@@ -18,6 +18,7 @@ namespace Snitch.Commands
         private readonly ProjectBuilder _builder;
         private readonly ProjectAnalyzer _analyzer;
         private readonly ProjectReporter _reporter;
+        private readonly ProjectFileReporter _fileReporter;
 
         public sealed class Settings : CommandSettings
         {
@@ -44,6 +45,10 @@ namespace Snitch.Commands
             [CommandOption("--no-prerelease")]
             [Description("Verifies that all package references are not pre-releases.")]
             public bool NoPreRelease { get; set; }
+
+            [CommandOption("-o|--out <filename>")]
+            [Description("The name of the json output file to write.")]
+            public string? OutputFileName { get; set; }
         }
 
         public AnalyzeCommand(IAnsiConsole console)
@@ -52,6 +57,7 @@ namespace Snitch.Commands
             _builder = new ProjectBuilder(console);
             _analyzer = new ProjectAnalyzer();
             _reporter = new ProjectReporter(console);
+            _fileReporter = new ProjectFileReporter(console);
         }
 
         public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
@@ -79,33 +85,60 @@ namespace Snitch.Commands
 
                 foreach (var projectToAnalyze in projectsToAnalyze)
                 {
-                    // Perform a design time build of the project.
-                    var buildResult = _builder.Build(
-                        projectToAnalyze,
-                        targetFramework,
-                        settings.Skip,
-                        projectCache);
-
-                    // Update the cache of built projects.
-                    projectCache.Add(buildResult.Project);
-                    foreach (var item in buildResult.Dependencies)
+                    if (!projectToAnalyze.EndsWith("csproj", StringComparison.OrdinalIgnoreCase)
+                        && !projectToAnalyze.EndsWith("fsproj", StringComparison.OrdinalIgnoreCase))
                     {
-                        projectCache.Add(item);
+                        var projectName = Path.GetFileNameWithoutExtension(projectToAnalyze);
+                        _console.MarkupLine($"Skipping Non .NET Project [aqua]{projectName}[/]");
+                        _console.WriteLine();
+
+                        continue;
                     }
 
-                    // Analyze the project.
-                    var analyzeResult = _analyzer.Analyze(buildResult.Project);
-                    if (settings.Exclude?.Length > 0)
+                    try
                     {
-                        // Filter packages that should be excluded.
-                        analyzeResult = analyzeResult.Filter(settings.Exclude);
-                    }
+                        // Perform a design time build of the project.
+                        var buildResult = _builder.Build(
+                            projectToAnalyze,
+                            targetFramework,
+                            settings.Skip,
+                            projectCache);
 
-                    analyzerResults.Add(analyzeResult);
+                        // Update the cache of built projects.
+                        projectCache.Add(buildResult.Project);
+                        foreach (var item in buildResult.Dependencies)
+                        {
+                            projectCache.Add(item);
+                        }
+
+                        // Analyze the project.
+                        var analyzeResult = _analyzer.Analyze(buildResult.Project);
+                        if (settings.Exclude?.Length > 0)
+                        {
+                            // Filter packages that should be excluded.
+                            analyzeResult = analyzeResult.Filter(settings.Exclude);
+                        }
+
+                        analyzerResults.Add(analyzeResult);
+                    }
+                    catch (Exception ex)
+                    {
+                        _console.MarkupLine($"  [red]ERROR:[/] {ex.Message}");
+                        if (settings.Strict)
+                        {
+                            return -1;
+                        }
+                    }
                 }
 
                 // Write the report to the console
                 _reporter.WriteToConsole(analyzerResults, settings.NoPreRelease);
+
+                if (settings.OutputFileName != null)
+                {
+                    // Write the report to a file.
+                    _fileReporter.WriteToFile(analyzerResults, settings.OutputFileName, settings.NoPreRelease);
+                }
 
                 // Return the correct exit code.
                 return GetExitCode(settings, analyzerResults);
