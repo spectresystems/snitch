@@ -222,5 +222,21 @@ namespace Sntich.Tests
             exitCode.ShouldBe(0);
             await Verifier.Verify(output);
         }
+
+        [Fact]
+        [Expectation("Slnx", "Default")]
+        public async Task Should_Return_Expected_Result_For_Slnx_Solution()
+        {
+            // Given
+            var fixture = new Fixture();
+            var solution = Fixture.GetPath("Snitch.Tests.Fixtures.slnx");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(solution);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
     }
 }

@@ -1,0 +1,12 @@
+<Solution>
+  <Project Path="Foo\Foo.csproj" />
+  <Project Path="Bar\Bar.csproj" />
+  <Project Path="Baz\Baz.csproj" />
+  <Project Path="Qux\Qux.csproj" />
+  <Project Path="Zap\Zap.csproj" />
+  <Project Path="Quux\Quux.csproj" />
+  <Project Path="Quuux\Quuux.csproj" />
+  <Project Path="Thud\Thud.csproj" />
+  <Project Path="Thuuud\Thuuud.csproj" />
+  <Project Path="FSharp\FSharp.fsproj" />
+</Solution>

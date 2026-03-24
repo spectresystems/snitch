@@ -53,6 +53,11 @@ namespace Snitch.Analysis.Utilities
                 return GetProjectsFromSolution(path);
             }
 
+            if (path.EndsWith(".slnx", StringComparison.InvariantCulture))
+            {
+                return SlnxParser.GetProjectsFromSlnx(path);
+            }
+
             throw new InvalidOperationException("Project or solution file do not exist.");
         }
 
@@ -61,8 +66,11 @@ namespace Snitch.Analysis.Utilities
             root ??= Environment.CurrentDirectory;
 
             var slns = Directory.GetFiles(root, "*.sln");
+            var slnxs = Directory.GetFiles(root, "*.slnx");
+            var allSolutions = new List<string>(slns);
+            allSolutions.AddRange(slnxs);
 
-            if (slns.Length == 0)
+            if (allSolutions.Count == 0)
             {
                 var subProjects = Directory.GetFiles(root, "*.csproj");
                 if (subProjects.Length == 0)
@@ -77,14 +85,14 @@ namespace Snitch.Analysis.Utilities
                 entry = subProjects[0];
                 return new List<string>(new[] { subProjects[0] });
             }
-            else if (slns.Length > 1)
+            else if (allSolutions.Count > 1)
             {
                 throw new InvalidOperationException("More than one solution file found.");
             }
             else
             {
-                entry = slns[0];
-                return GetProjectsFromSolution(slns[0]);
+                entry = allSolutions[0];
+                return GetProjectsFromFile(allSolutions[0]);
             }
         }
 
