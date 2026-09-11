@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <!-- This project is outside the Central Package Management cone and pins
+       its version inline, while the project it references manages it centrally. -->
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.9.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CentralizedPackageManagement\Qwerty\Qwerty.csproj" />
+  </ItemGroup>
+
+</Project>
