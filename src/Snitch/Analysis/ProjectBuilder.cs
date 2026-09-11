@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Buildalyzer;
+using NuGet.Frameworks;
+using NuGet.ProjectModel;
 using Snitch.Analysis.Utilities;
 using Spectre.Console;
 
@@ -99,10 +101,18 @@ namespace Snitch.Analysis
             built.Add(Path.GetFileName(path), project);
 
             // Get the package references.
+            var restoredVersions = GetRestoredVersions(assetPath, project.TargetFramework);
             foreach (var packageReference in result.PackageReferences)
             {
                 var version = packageReference.Value.GetValueOrDefault("Version");
                 var privateAssets = packageReference.Value.GetValueOrDefault("PrivateAssets");
+
+                if (string.IsNullOrWhiteSpace(version))
+                {
+                    // Central Package Management keeps the version out of the reference,
+                    // so fall back to the version that restore actually settled on.
+                    version = restoredVersions.GetValueOrDefault(packageReference.Key);
+                }
 
                 project.Packages.Add(new Package(packageReference.Key, version, privateAssets));
             }
@@ -137,6 +147,37 @@ namespace Snitch.Analysis
             }
 
             return project;
+        }
+
+        private static Dictionary<string, string> GetRestoredVersions(string? lockFilePath, string? targetFramework)
+        {
+            var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            if (string.IsNullOrWhiteSpace(lockFilePath) || string.IsNullOrWhiteSpace(targetFramework))
+            {
+                return result;
+            }
+
+            var lockFile = new LockFileFormat().Read(lockFilePath);
+            var framework = NuGetFramework.Parse(targetFramework);
+            var target = lockFile.PackageSpec.TargetFrameworks.FirstOrDefault(
+                x => x.FrameworkName.Framework.Equals(framework.Framework, StringComparison.OrdinalIgnoreCase));
+
+            if (target == null)
+            {
+                return result;
+            }
+
+            foreach (var dependency in target.Dependencies)
+            {
+                var version = dependency.LibraryRange?.VersionRange?.MinVersion;
+                if (version != null)
+                {
+                    result[dependency.Name] = version.ToNormalizedString();
+                }
+            }
+
+            return result;
         }
 
         private IAnalyzerResult? Build(AnalyzerManager manager, Project project, string? tfm, int indentation)
