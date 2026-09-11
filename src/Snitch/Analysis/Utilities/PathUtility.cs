@@ -70,7 +70,8 @@ namespace Snitch.Analysis.Utilities
 
             if (slns.Length == 0)
             {
-                var subProjects = Directory.GetFiles(root, "*.csproj");
+                // F# projects are analyzed just like C# ones, so discover them too.
+                var subProjects = Directory.GetFiles(root, "*.csproj").Concat(Directory.GetFiles(root, "*.fsproj")).ToArray();
                 if (subProjects.Length == 0)
                 {
                     throw new InvalidOperationException("No project or solution file found.");

@@ -400,6 +400,21 @@ namespace Sntich.Tests
             await Verifier.Verify(output);
         }
 
+        [Fact]
+        [Expectation("FSharp", "Discovered")]
+        public async Task Should_Find_An_FSharp_Project_In_A_Directory()
+        {
+            // Given
+            var directory = Fixture.GetPath("FSharp");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(directory);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
         public sealed class Fixture
         {
             public static string GetPath(string path)
