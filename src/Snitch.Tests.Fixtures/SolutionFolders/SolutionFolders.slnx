@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="..\Foo\Foo.csproj" />
+    <Folder Name="/src/nested/">
+      <Project Path="..\Bar\Bar.csproj" />
+    </Folder>
+  </Folder>
+</Solution>

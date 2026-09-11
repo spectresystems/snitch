@@ -1,0 +1,13 @@
+﻿Analyzing...
+Analyzing SolutionFolders.slnx
+Analyzing Foo...
+Analyzing Bar...
+
+╭─────────────────────────────────────────╮
+│  Packages that can be removed from Bar: │
+│ ┌──────────────┬──────────────────────┐ │
+│ │ Package      │ Referenced by        │ │
+│ ├──────────────┼──────────────────────┤ │
+│ │ Autofac      │ Foo                  │ │
+│ └──────────────┴──────────────────────┘ │
+╰─────────────────────────────────────────╯
