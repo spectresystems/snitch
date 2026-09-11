@@ -41,6 +41,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="Snitch.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="$(SolutionDir)..\src\icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
