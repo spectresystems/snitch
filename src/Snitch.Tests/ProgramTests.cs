@@ -190,6 +190,36 @@ namespace Sntich.Tests
             await Verifier.Verify(output);
         }
 
+        [Fact]
+        [Expectation("Asdf", "Default")]
+        public async Task Should_Return_Expected_Result_For_Centralized_Package_Management()
+        {
+            // Given
+            var solution = Fixture.GetPath("CentralizedPackageManagement/CentralizedPackageManagement.sln");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(solution);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
+        [Expectation("Slnx", "Default")]
+        public async Task Should_Return_Expected_Result_For_Slnx_Solution_Not_Specifying_Framework()
+        {
+            // Given
+            var solution = Fixture.GetPath("Snitch.Tests.Fixtures.slnx");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(solution);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
         public sealed class Fixture
         {
             public static string GetPath(string path)
