@@ -83,6 +83,13 @@ target framework._
 > snitch MyProject.csproj
 ```
 
+_Examine a solution. Both `.sln` and `.slnx` solutions are supported,
+as are projects using Central Package Management._
+
+```
+> snitch MySolution.slnx
+```
+
 _Examine a specific project using a specific
 target framework moniker._
 
