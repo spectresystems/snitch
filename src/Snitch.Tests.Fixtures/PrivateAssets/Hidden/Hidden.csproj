@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <!-- PrivateAssets="all" keeps Autofac from flowing to anyone referencing this project. -->
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.9.4" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

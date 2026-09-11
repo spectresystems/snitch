@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using NuGet.Versioning;
 
 namespace Snitch.Analysis
@@ -12,6 +13,16 @@ namespace Snitch.Analysis
         public VersionRange? Range { get; }
 
         public string? PrivateAssets { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the compile time assets of this package
+        /// are kept from projects referencing the one declaring it.
+        /// </summary>
+        public bool IsPrivate => PrivateAssets != null && PrivateAssets
+            .Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries)
+            .Any(asset =>
+                asset.Trim().Equals("compile", StringComparison.OrdinalIgnoreCase) ||
+                asset.Trim().Equals("all", StringComparison.OrdinalIgnoreCase));
 
         public bool IsGreaterThan(Package package, out bool indeterminate)
         {
