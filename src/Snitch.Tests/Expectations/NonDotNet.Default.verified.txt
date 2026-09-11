@@ -1,0 +1,7 @@
+﻿Analyzing...
+Analyzing App.csproj
+Analyzing App...
+Skipping Non .NET Project Native
+
+
+Everything looks good!

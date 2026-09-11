@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Buildalyzer;
@@ -31,7 +32,19 @@ namespace Snitch.Analysis
                 candidates.ToDictionary(
                     x => NuGetFramework.Parse(x, provider), y => y, new NuGetFrameworkFullComparer()));
 
-            return mappings[reducer.GetNearest(framework, mappings.Keys)];
+            var nearest = reducer.GetNearest(framework, mappings.Keys);
+            if (nearest == null)
+            {
+                // Nothing the project targets is compatible with what was asked for.
+                var available = mappings.Count == 0
+                    ? "none"
+                    : string.Join(", ", mappings.Values);
+
+                throw new InvalidOperationException(
+                    $"The project does not target anything compatible with '{framework.GetShortFolderName()}'. It targets: {available}.");
+            }
+
+            return mappings[nearest];
         }
     }
 }

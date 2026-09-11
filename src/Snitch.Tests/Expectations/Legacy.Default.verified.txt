@@ -1,0 +1,6 @@
+﻿Analyzing...
+Analyzing Legacy.csproj
+Analyzing Legacy...
+WARN: Old CSPROJ format can't be analyzed
+
+Everything looks good!

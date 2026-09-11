@@ -93,6 +93,40 @@ namespace Sntich.Tests
             left.IsSameVersion(right).ShouldBeFalse();
         }
 
+        [Theory]
+        [InlineData("all")]
+        [InlineData("All")]
+        [InlineData("compile")]
+        [InlineData("Compile")]
+        [InlineData("compile;runtime")]
+        [InlineData("runtime;compile")]
+        [InlineData("runtime, compile")]
+        [InlineData(" compile ")]
+        public void Should_Consider_A_Package_Private_When_It_Keeps_Its_Compile_Time_Assets(string privateAssets)
+        {
+            // Given, When
+            var package = new Package("Autofac", "4.9.4", privateAssets);
+
+            // Then
+            package.IsPrivate.ShouldBeTrue();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("runtime")]
+        [InlineData("runtime;native")]
+        [InlineData("none")]
+        [InlineData("compiler")]
+        public void Should_Not_Consider_A_Package_Private_When_Its_Compile_Time_Assets_Flow(string privateAssets)
+        {
+            // Given, When
+            var package = new Package("Autofac", "4.9.4", privateAssets);
+
+            // Then
+            package.IsPrivate.ShouldBeFalse();
+        }
+
         [Fact]
         public void Should_Throw_For_A_Package_With_An_Invalid_Version()
         {
