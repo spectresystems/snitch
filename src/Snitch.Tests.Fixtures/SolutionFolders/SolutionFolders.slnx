@@ -1,8 +1,21 @@
 <Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path="..\Directory.Build.props" />
+  </Folder>
   <Folder Name="/src/">
-    <Project Path="..\Foo\Foo.csproj" />
+    <Project Path="..\Foo\Foo.csproj">
+      <Configuration Solution="Debug|Any CPU" Project="Debug|AnyCPU" />
+    </Project>
     <Folder Name="/src/nested/">
-      <Project Path="..\Bar\Bar.csproj" />
+      <Project Path="../Bar/Bar.csproj">
+        <BuildDependency Project="../Foo/Foo.csproj" />
+      </Project>
     </Folder>
   </Folder>
 </Solution>
