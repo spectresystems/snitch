@@ -9,4 +9,8 @@
     <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Zxcv\Zxcv.csproj" />
+  </ItemGroup>
+
 </Project>

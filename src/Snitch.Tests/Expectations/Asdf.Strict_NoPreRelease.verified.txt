@@ -2,6 +2,7 @@
 Analyzing CentralizedPackageManagement.sln
 Analyzing Asdf...
   * Analyzing Qwerty (net8.0)...
+    * Analyzing Zxcv (net8.0)...
 
 ╭─────────────────────────────────────────────────────────╮
 │  Packages that can be removed from Asdf:                │
@@ -9,6 +10,7 @@ Analyzing Asdf...
 │ │ Package                    │ Referenced by          │ │
 │ ├────────────────────────────┼────────────────────────┤ │
 │ │ Newtonsoft.Json            │ Qwerty                 │ │
+│ │ Serilog                    │ Zxcv                   │ │
 │ └────────────────────────────┴────────────────────────┘ │
 │                                                         │
 │  Packages that might be removed from Asdf:              │
