@@ -75,7 +75,7 @@ namespace Snitch.Commands
             {
                 ctx.Refresh();
 
-                _console.MarkupLine($"Analyzing [yellow]{Path.GetFileName(entry)}[/]");
+                _console.MarkupLine($"Analyzing [yellow]{Path.GetFileName(entry).EscapeMarkup()}[/]");
 
                 foreach (var projectToAnalyze in projectsToAnalyze)
                 {

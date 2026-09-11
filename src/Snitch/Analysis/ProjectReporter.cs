@@ -42,11 +42,11 @@ namespace Snitch.Analysis
                     foreach (var item in result.CanBeRemoved)
                     {
                         table.AddRow(
-                            $"[green]{item.Package.Name}[/]",
-                            $"[aqua]{item.Original.Project.Name}[/]");
+                            $"[green]{item.Package.Name.EscapeMarkup()}[/]",
+                            $"[aqua]{item.Original.Project.Name.EscapeMarkup()}[/]");
                     }
 
-                    report.AddRow($" [yellow]Packages that can be removed from[/] [aqua]{result.Project}[/]:");
+                    report.AddRow($" [yellow]Packages that can be removed from[/] [aqua]{result.Project.EscapeMarkup()}[/]:");
                     report.AddRow(table);
 
                     if (!last || (last && resultsWithPackageMayBeRemove.Count > 0))
@@ -67,31 +67,31 @@ namespace Snitch.Analysis
                     {
                         if (item.Package.IsGreaterThan(item.Original.Package, out var indeterminate))
                         {
-                            var name = item.Original.Project.Name;
-                            var version = item.Original.Package.GetVersionString();
+                            var name = item.Original.Project.Name.EscapeMarkup();
+                            var version = item.Original.Package.GetVersionString().EscapeMarkup();
                             var verb = indeterminate ? "Might be updated from" : "Updated from";
                             var reason = $"[grey]{verb}[/] [silver]{version}[/] [grey]in[/] [aqua]{name}[/]";
 
                             table.AddRow(
-                                $"[green]{item.Package.Name}[/]",
-                                item.Package.GetVersionString(),
+                                $"[green]{item.Package.Name.EscapeMarkup()}[/]",
+                                item.Package.GetVersionString().EscapeMarkup(),
                                 reason);
                         }
                         else
                         {
-                            var name = item.Original.Project.Name;
-                            var version = item.Original.Package.GetVersionString();
+                            var name = item.Original.Project.Name.EscapeMarkup();
+                            var version = item.Original.Package.GetVersionString().EscapeMarkup();
                             var verb = indeterminate ? "Does not match" : "Downgraded from";
                             var reason = $"[grey]{verb}[/] [silver]{version}[/] [grey]in[/] [aqua]{name}[/]";
 
                             table.AddRow(
-                                $"[green]{item.Package.Name}[/]",
-                                item.Package.GetVersionString(),
+                                $"[green]{item.Package.Name.EscapeMarkup()}[/]",
+                                item.Package.GetVersionString().EscapeMarkup(),
                                 reason);
                         }
                     }
 
-                    report.AddRow($" [yellow]Packages that [u]might[/] be removed from[/] [aqua]{result.Project}[/]:");
+                    report.AddRow($" [yellow]Packages that [u]might[/] be removed from[/] [aqua]{result.Project.EscapeMarkup()}[/]:");
                     report.AddRow(table);
 
                     if (!last)
@@ -119,9 +119,9 @@ namespace Snitch.Analysis
                 foreach (var item in packagesByProject)
                 {
                     table.AddRow(
-                        $"[green]{item.Project}[/]",
-                        $"[yellow]{item.PackageName}[/]",
-                        $"{item.Version}");
+                        $"[green]{item.Project.EscapeMarkup()}[/]",
+                        $"[yellow]{item.PackageName.EscapeMarkup()}[/]",
+                        $"{item.Version}".EscapeMarkup());
                 }
 
                 report.AddRow(table);

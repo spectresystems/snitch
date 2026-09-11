@@ -136,8 +136,8 @@ namespace Snitch.Analysis
                 if (!projectReferencePath.EndsWith("csproj", StringComparison.OrdinalIgnoreCase) && !projectReferencePath.EndsWith("fsproj", StringComparison.OrdinalIgnoreCase))
                 {
                     _console.MarkupLine(string.IsNullOrWhiteSpace(tfm)
-                        ? $"Skipping Non .NET Project [aqua]{project.Name}[/]"
-                        : $"Skipping Non .NET Project [aqua]{project.Name}[/] [grey] ({tfm})[/]");
+                        ? $"Skipping Non .NET Project [aqua]{project.Name.EscapeMarkup()}[/]"
+                        : $"Skipping Non .NET Project [aqua]{project.Name.EscapeMarkup()}[/] [grey] ({tfm.EscapeMarkup()})[/]");
 
                     _console.WriteLine();
 
@@ -196,8 +196,8 @@ namespace Snitch.Analysis
             }
 
             var status = string.IsNullOrWhiteSpace(tfm)
-                ? $"{prefix}Analyzing [aqua]{project.Name}[/]..."
-                : $"{prefix}Analyzing [aqua]{project.Name}[/] [grey]({tfm})[/]...";
+                ? $"{prefix}Analyzing [aqua]{project.Name.EscapeMarkup()}[/]..."
+                : $"{prefix}Analyzing [aqua]{project.Name.EscapeMarkup()}[/] [grey]({tfm.EscapeMarkup()})[/]...";
 
             _console.MarkupLine(status);
 

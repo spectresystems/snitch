@@ -415,6 +415,21 @@ namespace Sntich.Tests
             await Verifier.Verify(output);
         }
 
+        [Fact]
+        [Expectation("Pinned", "Default")]
+        public async Task Should_Not_Interpret_A_Pinned_Package_Version_As_Markup()
+        {
+            // Given
+            var project = Fixture.GetPath("Pinned/App/App.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
         public sealed class Fixture
         {
             public static string GetPath(string path)
