@@ -236,6 +236,21 @@ namespace Sntich.Tests
         }
 
         [Fact]
+        [Expectation("Migrating", "Default")]
+        public async Task Should_Return_Expected_Result_When_Only_The_Referenced_Project_Uses_Central_Package_Management()
+        {
+            // Given
+            var project = Fixture.GetPath("Migrating/Migrating.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
         [Expectation("Grault", "net8.0")]
         public async Task Should_Return_Expected_Result_For_A_Multi_Targeting_Project()
         {

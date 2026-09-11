@@ -1,0 +1,13 @@
+﻿Analyzing...
+Analyzing Migrating.csproj
+Analyzing Migrating...
+  * Analyzing Qwerty (net8.0)...
+
+╭───────────────────────────────────────────────╮
+│  Packages that can be removed from Migrating: │
+│ ┌────────────────┬──────────────────────────┐ │
+│ │ Package        │ Referenced by            │ │
+│ ├────────────────┼──────────────────────────┤ │
+│ │ Autofac        │ Qwerty                   │ │
+│ └────────────────┴──────────────────────────┘ │
+╰───────────────────────────────────────────────╯
