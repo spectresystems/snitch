@@ -1,0 +1,13 @@
+﻿Analyzing...
+Analyzing Grault.csproj
+Analyzing Grault (net8.0)...
+  * Analyzing Foo (net8.0)...
+
+╭────────────────────────────────────────────╮
+│  Packages that can be removed from Grault: │
+│ ┌───────────────┬────────────────────────┐ │
+│ │ Package       │ Referenced by          │ │
+│ ├───────────────┼────────────────────────┤ │
+│ │ Autofac       │ Foo                    │ │
+│ └───────────────┴────────────────────────┘ │
+╰────────────────────────────────────────────╯
