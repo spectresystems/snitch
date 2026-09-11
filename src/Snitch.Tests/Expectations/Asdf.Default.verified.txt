@@ -1,0 +1,13 @@
+﻿Analyzing...
+Analyzing CentralizedPackageManagement.sln
+Analyzing Asdf...
+  * Analyzing Qwerty (net8.0)...
+
+╭──────────────────────────────────────────╮
+│  Packages that can be removed from Asdf: │
+│ ┌──────────────┬───────────────────────┐ │
+│ │ Package      │ Referenced by         │ │
+│ ├──────────────┼───────────────────────┤ │
+│ │ Autofac      │ Qwerty                │ │
+│ └──────────────┴───────────────────────┘ │
+╰──────────────────────────────────────────╯

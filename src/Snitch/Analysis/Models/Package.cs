@@ -45,7 +45,12 @@ namespace Snitch.Analysis
 
         public bool IsSameVersion(Package package)
         {
-            if (Version != null && package.Version != null)
+            if (Version == null && Range == null && package.Version == null && package.Range == null)
+            {
+                // Neither reference carries a version, so a central one governs both.
+                return true;
+            }
+            else if (Version != null && package.Version != null)
             {
                 // Version == Version
                 return new VersionComparer().Equals(Version, package.Version);
@@ -69,7 +74,7 @@ namespace Snitch.Analysis
             return Range?.OriginalString ?? "?";
         }
 
-        public Package(string name, string version, string? privateAssets)
+        public Package(string name, string? version, string? privateAssets)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             PrivateAssets = privateAssets;
@@ -79,15 +84,17 @@ namespace Snitch.Analysis
                 Version = semanticVersion;
                 Range = null;
             }
-            else
+            else if (VersionRange.TryParse(version, out var range))
             {
-                if (!VersionRange.TryParse(version, out var range))
-                {
-                    throw new ArgumentException($"Version '{version}' for package '{name}' is not valid.", nameof(version));
-                }
-
                 Version = null;
                 Range = range;
+            }
+            else
+            {
+                // No version at all. Central Package Management leaves the version
+                // off the reference itself, so this is expected rather than an error.
+                Version = null;
+                Range = null;
             }
         }
     }
