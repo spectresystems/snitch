@@ -56,23 +56,24 @@ namespace Snitch.Analysis
 
         public bool IsSameVersion(Package package)
         {
-            if (Version == null && Range == null && package.Version == null && package.Range == null)
+            // An exact version is the same thing as the range it implies, so comparing
+            // both sides as ranges also covers a reference declaring '1.0.0' next to
+            // one declaring '[1.0.0, )'.
+            var left = AsRange();
+            var right = package.AsRange();
+
+            if (left == null && right == null)
             {
                 // Neither reference carries a version, so a central one governs both.
                 return true;
             }
-            else if (Version != null && package.Version != null)
+
+            if (left == null || right == null)
             {
-                // Version == Version
-                return new VersionComparer().Equals(Version, package.Version);
-            }
-            else if (Range != null && package.Range != null)
-            {
-                // Range == Range
-                return new VersionRangeComparer().Equals(Range, package.Range);
+                return false;
             }
 
-            return false;
+            return new VersionRangeComparer().Equals(left, right);
         }
 
         public string GetVersionString()
@@ -90,7 +91,14 @@ namespace Snitch.Analysis
             Name = name ?? throw new ArgumentNullException(nameof(name));
             PrivateAssets = privateAssets;
 
-            if (NuGetVersion.TryParse(version, out var semanticVersion))
+            if (string.IsNullOrWhiteSpace(version))
+            {
+                // No version at all. Central Package Management leaves the version
+                // off the reference itself, so this is expected rather than an error.
+                Version = null;
+                Range = null;
+            }
+            else if (NuGetVersion.TryParse(version, out var semanticVersion))
             {
                 Version = semanticVersion;
                 Range = null;
@@ -102,11 +110,18 @@ namespace Snitch.Analysis
             }
             else
             {
-                // No version at all. Central Package Management leaves the version
-                // off the reference itself, so this is expected rather than an error.
-                Version = null;
-                Range = null;
+                throw new ArgumentException($"Version '{version}' for package '{name}' is not valid.", nameof(version));
             }
+        }
+
+        private VersionRange? AsRange()
+        {
+            if (Range != null)
+            {
+                return Range;
+            }
+
+            return Version != null ? new VersionRange(Version) : null;
         }
     }
 }
