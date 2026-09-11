@@ -370,6 +370,21 @@ namespace Sntich.Tests
             await Verifier.Verify(output);
         }
 
+        [Fact]
+        [Expectation("PrivateAssets", "All")]
+        public async Task Should_Not_Report_A_Package_A_Referenced_Project_Keeps_Private()
+        {
+            // Given
+            var project = Fixture.GetPath("PrivateAssets/Visible/Visible.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
         public sealed class Fixture
         {
             public static string GetPath(string path)

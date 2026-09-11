@@ -86,7 +86,7 @@ namespace Snitch.Analysis
 
             void AddToAccumulated(Package package)
             {
-                if (package.PrivateAssets != null && package.PrivateAssets.Contains("compile"))
+                if (package.IsPrivate)
                 {
                     return;
                 }
