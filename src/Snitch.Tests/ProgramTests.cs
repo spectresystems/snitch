@@ -371,6 +371,21 @@ namespace Sntich.Tests
         }
 
         [Fact]
+        [Expectation("Thuuud", "Exclude_NoPreRelease")]
+        public async Task Should_Not_Report_An_Excluded_Package_As_A_Pre_Release()
+        {
+            // Given
+            var project = Fixture.GetPath("Thuuud/Thuuud.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project, "--no-prerelease", "--strict", "--exclude", "Newtonsoft.Json");
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
         [Expectation("PrivateAssets", "All")]
         public async Task Should_Not_Report_A_Package_A_Referenced_Project_Keeps_Private()
         {
