@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using Microsoft.Build.Construction;
 
 namespace Snitch.Analysis.Utilities
@@ -53,6 +54,11 @@ namespace Snitch.Analysis.Utilities
                 return GetProjectsFromSolution(path);
             }
 
+            if (path.EndsWith(".slnx", StringComparison.InvariantCulture))
+            {
+                return GetProjectsFromSlnxSolution(path);
+            }
+
             throw new InvalidOperationException("Project or solution file do not exist.");
         }
 
@@ -60,7 +66,7 @@ namespace Snitch.Analysis.Utilities
         {
             root ??= Environment.CurrentDirectory;
 
-            var slns = Directory.GetFiles(root, "*.sln");
+            var slns = Directory.GetFiles(root, "*.sln").Concat(Directory.GetFiles(root, "*.slnx")).ToArray();
 
             if (slns.Length == 0)
             {
@@ -84,7 +90,7 @@ namespace Snitch.Analysis.Utilities
             else
             {
                 entry = slns[0];
-                return GetProjectsFromSolution(slns[0]);
+                return GetProjectsFromFile(slns[0]);
             }
         }
 
@@ -92,6 +98,19 @@ namespace Snitch.Analysis.Utilities
         {
             var solutionFile = SolutionFile.Parse(solution);
             return solutionFile.ProjectsInOrder.Where(p => p.ProjectType == SolutionProjectType.KnownToBeMSBuildFormat).Select(p => p.AbsolutePath).Distinct().ToList();
+        }
+
+        private static List<string> GetProjectsFromSlnxSolution(string solution)
+        {
+            var directory = Path.GetDirectoryName(solution) ?? Environment.CurrentDirectory;
+
+            // Projects can be nested in folders, so look at every descendant.
+            return XDocument.Load(solution).Descendants("Project")
+                .Select(project => project.Attribute("Path")?.Value)
+                .Where(path => path != null && path.EndsWith("proj", StringComparison.OrdinalIgnoreCase))
+                .Select(path => Path.GetFullPath(Path.Combine(directory, path!.Replace('\\', Path.DirectorySeparatorChar))))
+                .Distinct()
+                .ToList();
         }
     }
 }
