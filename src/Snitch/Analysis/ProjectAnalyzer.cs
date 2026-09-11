@@ -61,7 +61,7 @@ namespace Snitch.Analysis
                     {
                         if (!result.ContainsPackage(found.Package))
                         {
-                            if (project.Name.Equals(root.Name, StringComparison.OrdinalIgnoreCase))
+                            if (project.Path.Equals(root.Path, StringComparison.OrdinalIgnoreCase))
                             {
                                 result.Add(new PackageToRemove(project, package, found));
                             }
@@ -105,8 +105,13 @@ namespace Snitch.Analysis
 
             // Find the expected target.
             var framework = NuGetFramework.Parse(project.TargetFramework);
+
+            // A multi targeting project has one target per framework, so the exact
+            // one has to win over another one that merely shares its identifier.
             var target = lockfile.PackageSpec.TargetFrameworks.FirstOrDefault(
-                x => x.FrameworkName.Framework.Equals(framework.Framework, StringComparison.OrdinalIgnoreCase));
+                    x => x.FrameworkName.Equals(framework))
+                ?? lockfile.PackageSpec.TargetFrameworks.FirstOrDefault(
+                    x => x.FrameworkName.Framework.Equals(framework.Framework, StringComparison.OrdinalIgnoreCase));
 
             // Could we not find the target?
             if (target == null)
