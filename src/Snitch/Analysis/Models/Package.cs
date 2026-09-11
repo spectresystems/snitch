@@ -58,7 +58,7 @@ namespace Snitch.Analysis
             else if (Range != null && package.Range != null)
             {
                 // Range == Range
-                new VersionRangeComparer().Equals(Range, package.Range);
+                return new VersionRangeComparer().Equals(Range, package.Range);
             }
 
             return false;
