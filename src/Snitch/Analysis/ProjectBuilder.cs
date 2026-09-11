@@ -200,7 +200,7 @@ namespace Snitch.Analysis
             if (!string.IsNullOrWhiteSpace(tfm))
             {
                 var closest = results.GetNearestFrameworkMoniker(tfm);
-                results = results.Where(p => p.TargetFramework.Equals(closest, StringComparison.OrdinalIgnoreCase));
+                results = results.Where(p => closest.Equals(p.TargetFramework, StringComparison.OrdinalIgnoreCase));
             }
 
             return results.FirstOrDefault();

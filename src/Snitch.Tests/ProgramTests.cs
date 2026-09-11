@@ -236,6 +236,21 @@ namespace Sntich.Tests
         }
 
         [Fact]
+        [Expectation("Grault", "net8.0")]
+        public async Task Should_Return_Expected_Result_For_A_Multi_Targeting_Project()
+        {
+            // Given
+            var project = Fixture.GetPath("Grault/Grault.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project, "--tfm", "net8.0");
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
         [Expectation("Slnx", "SolutionFolders")]
         public async Task Should_Return_Expected_Result_For_Slnx_Solution_With_Solution_Folders()
         {
