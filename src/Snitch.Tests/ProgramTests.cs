@@ -206,6 +206,21 @@ namespace Sntich.Tests
         }
 
         [Fact]
+        [Expectation("Asdf", "Strict_NoPreRelease")]
+        public async Task Should_Return_Expected_Result_For_Centralized_Package_Management_When_Running_With_NoPreRelease()
+        {
+            // Given
+            var solution = Fixture.GetPath("CentralizedPackageManagement/CentralizedPackageManagement.sln");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(solution, "--strict", "--no-prerelease");
+
+            // Then
+            exitCode.ShouldBe(-1);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
         [Expectation("Slnx", "Default")]
         public async Task Should_Return_Expected_Result_For_Slnx_Solution_Not_Specifying_Framework()
         {
