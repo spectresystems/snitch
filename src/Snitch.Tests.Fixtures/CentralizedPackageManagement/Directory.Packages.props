@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageVersion Include="Autofac" Version="4.9.4" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.2-beta2" />
   </ItemGroup>
 
   <ItemGroup>

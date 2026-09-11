@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" />
+    <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
 
 </Project>
