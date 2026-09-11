@@ -445,6 +445,21 @@ namespace Sntich.Tests
             await Verifier.Verify(output);
         }
 
+        [Fact]
+        [Expectation("Markup", "ProjectName")]
+        public async Task Should_Not_Interpret_A_Project_Name_As_Markup_While_Building()
+        {
+            // Given
+            var project = Fixture.GetPath("Markup/Weird[1]/Weird[1].csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project, "--tfm", "netstandard2.0");
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
         public sealed class Fixture
         {
             public static string GetPath(string path)
