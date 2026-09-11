@@ -18,14 +18,19 @@ namespace Snitch.Analysis
 
         public bool HasPreReleases => PreReleasePackages.Count > 0;
 
-        public ProjectAnalyzerResult(Project project, IEnumerable<PackageToRemove> packages)
+        public ProjectAnalyzerResult(Project project, IEnumerable<PackageToRemove> packages, string[]? exclude = null)
         {
             _project = project;
             _packages = new List<PackageToRemove>(packages ?? throw new ArgumentNullException(nameof(packages)));
 
             CanBeRemoved = new List<PackageToRemove>(packages.Where(p => p.CanBeRemoved));
             MightBeRemoved = new List<PackageToRemove>(packages.Where(p => p.VersionMismatch));
-            PreReleasePackages = new List<Package>(project.Packages.Where(p => p.Version != null && p.Version.IsPrerelease));
+
+            // An excluded package is excluded everywhere, the pre-release report included.
+            PreReleasePackages = new List<Package>(project.Packages.Where(
+                p => p.Version != null
+                    && p.Version.IsPrerelease
+                    && !(exclude?.Contains(p.Name, StringComparer.OrdinalIgnoreCase) ?? false)));
         }
 
         public ProjectAnalyzerResult Filter(string[]? packages)
@@ -36,7 +41,7 @@ namespace Snitch.Analysis
             }
 
             var filtered = _packages.Where(p => !packages.Contains(p.Package.Name, StringComparer.OrdinalIgnoreCase));
-            return new ProjectAnalyzerResult(_project, filtered);
+            return new ProjectAnalyzerResult(_project, filtered, packages);
         }
     }
 }
