@@ -14,11 +14,19 @@ namespace Snitch.Analysis
         public List<Project> ProjectReferences { get; }
         public List<Package> Packages { get; }
 
-        public Project(string path)
+        /// <summary>
+        /// Gets the target framework the project was asked to build for, which is
+        /// empty when none was given. A multi targeting project yields different
+        /// packages per framework, so this is part of its identity.
+        /// </summary>
+        public string RequestedTargetFramework { get; }
+
+        public Project(string path, string? requestedTargetFramework = null)
         {
             Path = path ?? throw new ArgumentNullException(nameof(path));
             Name = System.IO.Path.GetFileNameWithoutExtension(Path);
             TargetFramework = string.Empty;
+            RequestedTargetFramework = requestedTargetFramework ?? string.Empty;
             ProjectReferences = new List<Project>();
             Packages = new List<Package>();
         }
