@@ -163,6 +163,12 @@ namespace Snitch.Analysis
             // built again the moment a parent asks for the very framework it settled on.
             built[GetCacheKey(project)] = project;
             built[GetCacheKey(project.Path, project.TargetFramework)] = project;
+
+            if (!project.IsMultiTargeting)
+            {
+                // Only one framework to build, so it answers for any request.
+                built[GetCacheKey(project.Path, null)] = project;
+            }
         }
 
         private static string GetCacheKey(Project project)
@@ -227,6 +233,12 @@ namespace Snitch.Analysis
 
             var projectAnalyzer = manager.GetProject(project.Path);
             var results = (IEnumerable<IAnalyzerResult>)projectAnalyzer.Build();
+
+            project.IsMultiTargeting = results
+                .Select(x => x.TargetFramework)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Skip(1).Any();
 
             if (!string.IsNullOrWhiteSpace(tfm))
             {
