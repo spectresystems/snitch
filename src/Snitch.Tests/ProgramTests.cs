@@ -355,6 +355,21 @@ namespace Sntich.Tests
             await Verifier.Verify(output);
         }
 
+        [Fact]
+        [Expectation("Duplicates", "Default")]
+        public async Task Should_Not_Merge_Two_Referenced_Projects_That_Share_A_File_Name()
+        {
+            // Given
+            var project = Fixture.GetPath("Duplicates/Consumer/Consumer.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
         public sealed class Fixture
         {
             public static string GetPath(string path)
