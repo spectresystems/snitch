@@ -140,9 +140,12 @@ namespace Snitch.Analysis
 
                 if (!projectReferencePath.EndsWith("csproj", StringComparison.OrdinalIgnoreCase) && !projectReferencePath.EndsWith("fsproj", StringComparison.OrdinalIgnoreCase))
                 {
+                    // The reference is the one being skipped, not the project holding it.
+                    var skipped = Path.GetFileNameWithoutExtension(projectReferencePath).EscapeMarkup();
+
                     _console.MarkupLine(string.IsNullOrWhiteSpace(tfm)
-                        ? $"Skipping Non .NET Project [aqua]{project.Name.EscapeMarkup()}[/]"
-                        : $"Skipping Non .NET Project [aqua]{project.Name.EscapeMarkup()}[/] [grey] ({tfm.EscapeMarkup()})[/]");
+                        ? $"Skipping Non .NET Project [aqua]{skipped}[/]"
+                        : $"Skipping Non .NET Project [aqua]{skipped}[/] [grey] ({tfm.EscapeMarkup()})[/]");
 
                     _console.WriteLine();
 

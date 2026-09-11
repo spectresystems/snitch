@@ -460,6 +460,83 @@ namespace Sntich.Tests
             await Verifier.Verify(output);
         }
 
+        [Fact]
+        [Expectation("Baz", "Incompatible_Tfm")]
+        public async Task Should_Explain_Itself_When_No_Target_Framework_Matches()
+        {
+            // Given
+            var project = Fixture.GetPath("Baz/Baz.csproj");
+
+            // When
+            var (_, output) = await Fixture.Run(project, "--tfm", "net45");
+
+            // Then
+            output.ShouldNotContain("Parameter 'key'");
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
+        [Expectation("Baz", "Markup_Tfm")]
+        public async Task Should_Not_Interpret_A_Target_Framework_As_Markup()
+        {
+            // Given
+            var project = Fixture.GetPath("Baz/Baz.csproj");
+
+            // When
+            var (_, output) = await Fixture.Run(project, "--tfm", "[x]");
+
+            // Then
+            output.ShouldContain("[x]");
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
+        [Expectation("NonDotNet", "Default")]
+        public async Task Should_Skip_A_Referenced_Project_That_Is_Not_Dot_Net()
+        {
+            // Given
+            var project = Fixture.GetPath("NonDotNet/App/App.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project);
+
+            // Then
+            exitCode.ShouldBe(0);
+            output.ShouldContain("Skipping Non .NET Project Native");
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
+        [Expectation("NonDotNet", "netstandard2.0")]
+        public async Task Should_Skip_A_Referenced_Project_That_Is_Not_Dot_Net_When_Specifying_Framework()
+        {
+            // Given
+            var project = Fixture.GetPath("NonDotNet/App/App.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project, "--tfm", "netstandard2.0");
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
+        [Expectation("Legacy", "Default")]
+        public async Task Should_Warn_About_A_Project_In_The_Old_Csproj_Format()
+        {
+            // Given
+            var project = Fixture.GetPath("Legacy/Legacy.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project);
+
+            // Then
+            exitCode.ShouldBe(0);
+            output.ShouldContain("Old CSPROJ format can't be analyzed");
+            await Verifier.Verify(output);
+        }
+
         public sealed class Fixture
         {
             public static string GetPath(string path)
