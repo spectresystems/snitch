@@ -236,6 +236,21 @@ namespace Sntich.Tests
         }
 
         [Fact]
+        [Expectation("App", "net6.0")]
+        public async Task Should_Use_The_Centrally_Managed_Version_Of_The_Requested_Target_Framework()
+        {
+            // Given
+            var project = Fixture.GetPath("ConditionalVersions/App/App.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project, "--tfm", "net6.0");
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
         [Expectation("Uiop", "Default")]
         public async Task Should_Prefer_An_Inline_Version_Over_The_Centrally_Managed_One()
         {

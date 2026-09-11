@@ -160,8 +160,13 @@ namespace Snitch.Analysis
 
             var lockFile = new LockFileFormat().Read(lockFilePath);
             var framework = NuGetFramework.Parse(targetFramework);
+
+            // Versions can be conditioned per target framework, so the exact one has to win
+            // over another one that merely shares the same framework identifier.
             var target = lockFile.PackageSpec.TargetFrameworks.FirstOrDefault(
-                x => x.FrameworkName.Framework.Equals(framework.Framework, StringComparison.OrdinalIgnoreCase));
+                    x => x.FrameworkName.Equals(framework))
+                ?? lockFile.PackageSpec.TargetFrameworks.FirstOrDefault(
+                    x => x.FrameworkName.Framework.Equals(framework.Framework, StringComparison.OrdinalIgnoreCase));
 
             if (target == null)
             {
