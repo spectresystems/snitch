@@ -18,12 +18,20 @@ namespace Snitch.Analysis
                 return false;
             }
 
-            return x.Path.Equals(y.Path, StringComparison.OrdinalIgnoreCase);
+            return x.Path.Equals(y.Path, StringComparison.OrdinalIgnoreCase)
+                && x.RequestedTargetFramework.Equals(y.RequestedTargetFramework, StringComparison.OrdinalIgnoreCase);
         }
 
         public int GetHashCode([DisallowNull] Project obj)
         {
-            return obj?.Path?.GetHashCode(StringComparison.OrdinalIgnoreCase) ?? 0;
+            if (obj?.Path == null)
+            {
+                return 0;
+            }
+
+            return HashCode.Combine(
+                obj.Path.GetHashCode(StringComparison.OrdinalIgnoreCase),
+                obj.RequestedTargetFramework.GetHashCode(StringComparison.OrdinalIgnoreCase));
         }
     }
 }

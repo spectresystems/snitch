@@ -430,6 +430,21 @@ namespace Sntich.Tests
             await Verifier.Verify(output);
         }
 
+        [Fact]
+        [Expectation("SharedCache", "Default")]
+        public async Task Should_Not_Reuse_A_Multi_Targeting_Project_Across_Target_Frameworks()
+        {
+            // Given
+            var solution = Fixture.GetPath("SharedCache/SharedCache.slnx");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(solution);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
         public sealed class Fixture
         {
             public static string GetPath(string path)

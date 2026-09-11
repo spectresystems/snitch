@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Old\Old.csproj" />
+  <Project Path="New\New.csproj" />
+</Solution>

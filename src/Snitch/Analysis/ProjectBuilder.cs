@@ -27,9 +27,14 @@ namespace Snitch.Analysis
         {
             var manager = new AnalyzerManager();
 
-            // Keyed by the full path — two projects can share a file name.
-            var built = cache?.ToDictionary(x => x.Path, x => x, StringComparer.OrdinalIgnoreCase)
-                ?? new Dictionary<string, Project>(StringComparer.OrdinalIgnoreCase);
+            // Keyed by the full path — two projects can share a file name — plus the
+            // requested target framework, since a multi targeting project referenced
+            // from two roots yields different packages for each of them.
+            var built = new Dictionary<string, Project>(StringComparer.OrdinalIgnoreCase);
+            foreach (var cached in cache ?? Enumerable.Empty<Project>())
+            {
+                Remember(built, cached);
+            }
 
             var project = Build(manager, path, tfm, skip, built);
 
@@ -60,13 +65,13 @@ namespace Snitch.Analysis
 
             path = Path.GetFullPath(path);
 
-            // Already built this project?
-            if (built.TryGetValue(path, out var project))
+            // Already built this project for this target framework?
+            if (built.TryGetValue(GetCacheKey(path, tfm), out var project))
             {
                 return project;
             }
 
-            project = new Project(path);
+            project = new Project(path, tfm);
 
             var result = Build(manager, project, tfm, indentation);
             if (result == null)
@@ -100,7 +105,7 @@ namespace Snitch.Analysis
             project.LockFilePath = assetPath;
 
             // Add the project to the built list.
-            built.Add(path, project);
+            Remember(built, project);
 
             // Get the package references.
             var restoredVersions = GetRestoredVersions(assetPath, project.TargetFramework);
@@ -149,6 +154,25 @@ namespace Snitch.Analysis
             }
 
             return project;
+        }
+
+        private static void Remember(Dictionary<string, Project> built, Project project)
+        {
+            // Under the framework that was asked for, and under the one it resolved to.
+            // Without the latter a project built with no framework in particular would be
+            // built again the moment a parent asks for the very framework it settled on.
+            built[GetCacheKey(project)] = project;
+            built[GetCacheKey(project.Path, project.TargetFramework)] = project;
+        }
+
+        private static string GetCacheKey(Project project)
+        {
+            return GetCacheKey(project.Path, project.RequestedTargetFramework);
+        }
+
+        private static string GetCacheKey(string path, string? tfm)
+        {
+            return $"{path}|{tfm}";
         }
 
         private static Dictionary<string, string> GetRestoredVersions(string? lockFilePath, string? targetFramework)
