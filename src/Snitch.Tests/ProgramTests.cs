@@ -311,6 +311,36 @@ namespace Sntich.Tests
         }
 
         [Fact]
+        [Expectation("Slnx", "Skip_Foo")]
+        public async Task Should_Return_Expected_Result_For_Slnx_Solution_When_Skipping_A_Project()
+        {
+            // Given
+            var solution = Fixture.GetPath("Snitch.Tests.Fixtures.slnx");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(solution, "--skip", "Foo");
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
+        [Expectation("Solution", "Ambiguous")]
+        public async Task Should_Fail_When_A_Directory_Holds_Both_A_Sln_And_A_Slnx()
+        {
+            // Given
+            var directory = Fixture.GetPath(string.Empty);
+
+            // When
+            var (exitCode, output) = await Fixture.Run(directory);
+
+            // Then
+            exitCode.ShouldBe(-1);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
         [Expectation("Slnx", "Discovered")]
         public async Task Should_Find_A_Slnx_Solution_In_A_Directory()
         {
