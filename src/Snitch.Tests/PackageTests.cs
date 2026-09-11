@@ -1,3 +1,4 @@
+using System;
 using Shouldly;
 using Snitch.Analysis;
 using Xunit;
@@ -63,6 +64,44 @@ namespace Sntich.Tests
 
             // When, Then
             versionless.IsSameVersion(versioned).ShouldBeFalse();
+        }
+
+        [Theory]
+        [InlineData("1.0.0", "[1.0.0, )")]
+        [InlineData("[1.0.0, )", "1.0.0")]
+        public void Should_Consider_An_Exact_Version_The_Same_As_The_Range_It_Implies(string first, string second)
+        {
+            // Given
+            var left = new Package("Autofac", first, null);
+            var right = new Package("Autofac", second, null);
+
+            // When, Then
+            left.IsSameVersion(right).ShouldBeTrue();
+        }
+
+        [Theory]
+        [InlineData("1.0.0", "[1.0.0]")]
+        [InlineData("1.0.0", "(1.0.0, )")]
+        [InlineData("1.0.0", "2.0.0")]
+        public void Should_Not_Consider_Different_Version_Ranges_To_Be_The_Same_Version(string first, string second)
+        {
+            // Given
+            var left = new Package("Autofac", first, null);
+            var right = new Package("Autofac", second, null);
+
+            // When, Then
+            left.IsSameVersion(right).ShouldBeFalse();
+        }
+
+        [Fact]
+        public void Should_Throw_For_A_Package_With_An_Invalid_Version()
+        {
+            // Given, When
+            var result = Record.Exception(() => new Package("Autofac", "not-a-version", null));
+
+            // Then
+            result.ShouldBeOfType<ArgumentException>()
+                .Message.ShouldStartWith("Version 'not-a-version' for package 'Autofac' is not valid.");
         }
     }
 }
