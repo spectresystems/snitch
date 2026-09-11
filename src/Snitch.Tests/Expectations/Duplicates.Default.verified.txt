@@ -1,0 +1,15 @@
+﻿Analyzing...
+Analyzing Consumer.csproj
+Analyzing Consumer...
+  * Analyzing Common (net8.0)...
+  * Analyzing Common (net8.0)...
+
+╭──────────────────────────────────────────────╮
+│  Packages that can be removed from Consumer: │
+│ ┌───────────────┬──────────────────────────┐ │
+│ │ Package       │ Referenced by            │ │
+│ ├───────────────┼──────────────────────────┤ │
+│ │ Autofac       │ Common                   │ │
+│ │ Serilog       │ Common                   │ │
+│ └───────────────┴──────────────────────────┘ │
+╰──────────────────────────────────────────────╯

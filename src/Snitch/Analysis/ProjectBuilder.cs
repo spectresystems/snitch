@@ -26,7 +26,9 @@ namespace Snitch.Analysis
             IEnumerable<Project>? cache = null)
         {
             var manager = new AnalyzerManager();
-            var built = cache?.ToDictionary(x => x.File, x => x, StringComparer.OrdinalIgnoreCase)
+
+            // Keyed by the full path — two projects can share a file name.
+            var built = cache?.ToDictionary(x => x.Path, x => x, StringComparer.OrdinalIgnoreCase)
                 ?? new Dictionary<string, Project>(StringComparer.OrdinalIgnoreCase);
 
             var project = Build(manager, path, tfm, skip, built);
@@ -59,7 +61,7 @@ namespace Snitch.Analysis
             path = Path.GetFullPath(path);
 
             // Already built this project?
-            if (built.TryGetValue(Path.GetFileName(path), out var project))
+            if (built.TryGetValue(path, out var project))
             {
                 return project;
             }
@@ -98,7 +100,7 @@ namespace Snitch.Analysis
             project.LockFilePath = assetPath;
 
             // Add the project to the built list.
-            built.Add(Path.GetFileName(path), project);
+            built.Add(path, project);
 
             // Get the package references.
             var restoredVersions = GetRestoredVersions(assetPath, project.TargetFramework);

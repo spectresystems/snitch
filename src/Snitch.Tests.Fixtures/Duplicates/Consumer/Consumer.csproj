@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.9.4" />
+    <PackageReference Include="Serilog" Version="2.12.0" />
+  </ItemGroup>
+
+  <!-- Two different projects that happen to share a file name. -->
+  <ItemGroup>
+    <ProjectReference Include="..\First\Common.csproj" />
+    <ProjectReference Include="..\Second\Common.csproj" />
+  </ItemGroup>
+
+</Project>
