@@ -235,6 +235,36 @@ namespace Sntich.Tests
             await Verifier.Verify(output);
         }
 
+        [Fact]
+        [Expectation("Slnx", "SolutionFolders")]
+        public async Task Should_Return_Expected_Result_For_Slnx_Solution_With_Solution_Folders()
+        {
+            // Given
+            var solution = Fixture.GetPath("SolutionFolders/SolutionFolders.slnx");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(solution);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
+        [Expectation("Slnx", "Discovered")]
+        public async Task Should_Find_A_Slnx_Solution_In_A_Directory()
+        {
+            // Given
+            var directory = Fixture.GetPath("SolutionFolders");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(directory);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
         public sealed class Fixture
         {
             public static string GetPath(string path)
