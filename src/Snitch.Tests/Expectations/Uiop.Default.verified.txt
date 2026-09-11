@@ -1,19 +1,11 @@
 ﻿Analyzing...
-Analyzing CentralizedPackageManagement.sln
-Analyzing Asdf...
+Analyzing Uiop.csproj
+Analyzing Uiop...
   * Analyzing Qwerty (net8.0)...
     * Analyzing Zxcv (net8.0)...
 
 ╭─────────────────────────────────────────────────────────╮
-│  Packages that can be removed from Asdf:                │
-│ ┌────────────────────────────┬────────────────────────┐ │
-│ │ Package                    │ Referenced by          │ │
-│ ├────────────────────────────┼────────────────────────┤ │
-│ │ Newtonsoft.Json            │ Qwerty                 │ │
-│ │ Serilog                    │ Zxcv                   │ │
-│ └────────────────────────────┴────────────────────────┘ │
-│                                                         │
-│  Packages that might be removed from Asdf:              │
+│  Packages that might be removed from Uiop:              │
 │ ┌─────────┬─────────┬─────────────────────────────────┐ │
 │ │ Package │ Version │ Reason                          │ │
 │ ├─────────┼─────────┼─────────────────────────────────┤ │

@@ -236,6 +236,21 @@ namespace Sntich.Tests
         }
 
         [Fact]
+        [Expectation("Uiop", "Default")]
+        public async Task Should_Prefer_An_Inline_Version_Over_The_Centrally_Managed_One()
+        {
+            // Given
+            var project = Fixture.GetPath("CentralizedPackageManagement/Uiop/Uiop.csproj");
+
+            // When
+            var (exitCode, output) = await Fixture.Run(project);
+
+            // Then
+            exitCode.ShouldBe(0);
+            await Verifier.Verify(output);
+        }
+
+        [Fact]
         [Expectation("Migrating", "Default")]
         public async Task Should_Return_Expected_Result_When_Only_The_Referenced_Project_Uses_Central_Package_Management()
         {

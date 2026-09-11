@@ -4,10 +4,10 @@
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
+  <!-- Pins a version inline even though versions are managed centrally. NuGet rejects
+       this during a normal restore, but the inline version is what must win here. -->
   <ItemGroup>
-    <PackageReference Include="Autofac" VersionOverride="4.9.3" />
-    <PackageReference Include="Newtonsoft.Json" />
-    <PackageReference Include="Serilog" />
+    <PackageReference Include="Autofac" Version="4.9.3" />
   </ItemGroup>
 
   <ItemGroup>
